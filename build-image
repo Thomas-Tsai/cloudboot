@@ -5,10 +5,26 @@ ipxe_image_path="$current_path/ipxe_image"
 ipxe_path="ipxe"
 ipxe_src="$current_path/$ipxe_path/src/"
 ipxe_bin="$current_path/$ipxe_path/src/bin"
-[ ! -d $ipxe_image_path ] && mkdir $ipxe_image_path
-[ ! -d $current_path/$ipxe_path ] && git clone git://git.ipxe.org/ipxe.git $ipxe_path
-[ -f $rom_script ] && make -C $ipxe_src EMBEDDED_IMAGE=$rom_script
-rm $ipxe_bin/ipxe*.tmp
-rm $ipxe_bin/ipxe*.map
-cp $ipxe_bin/ipxe* $ipxe_image_path
-rm -rf $ipxe_path
+build_rom_script(){
+
+    ip=`cat config.php |grep site | grep -v url|awk {'print $2'}|sed  s/\"//g| sed s/=//g | sed s/\;//`
+    cat <<-IPXE > $rom_script
+#!gpxe
+dhcp net0
+chain http://$ip/drbloncloud/boot.gpxe 
+IPXE
+
+}
+
+copy_rom() {
+    [ ! -d $ipxe_image_path ] && mkdir $ipxe_image_path
+    [ ! -d $current_path/$ipxe_path ] && git clone git://git.ipxe.org/ipxe.git $ipxe_path
+    [ -f $rom_script ] && make -C $ipxe_src EMBEDDED_IMAGE=$rom_script
+    rm $ipxe_bin/ipxe*.tmp
+    rm $ipxe_bin/ipxe*.map
+    cp $ipxe_bin/ipxe* $ipxe_image_path
+    rm -rf $ipxe_path
+}
+
+build_rom_script
+copy_rom

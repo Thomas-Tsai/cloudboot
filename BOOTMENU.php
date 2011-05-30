@@ -54,8 +54,8 @@ function get_iso_from_page($page, $regx){
 }
 
 function print_default_menu_entry(){
-    global $agent_url, $kernel_url, $url, $pattern, $default_proj, $default_arch;
-    $page = file_get_contents($url[$default_proj]);
+    global $agent_url, $kernel_url, $freeurl, $pattern, $default_proj, $default_arch;
+    $page = file_get_contents($freeurl[$default_proj]);
     $page_ok = preg_match("/200/",$http_response_header[0]);
     //echo "$link-$http_response_header[0]\n";
 
@@ -98,7 +98,7 @@ function print_default_menu_entry(){
 }
 
 ### main ###
-global $kernel_url, $url, $pattern, $menu, $freedos_url, $memtest_url, $default_proj, $default_arch;
+global $kernel_url, $freeurl, $pattern, $menu, $freedos_url, $memtest_url, $default_proj, $default_arch;
 print_menu_head();
 print_default_menu_entry();
 
@@ -107,7 +107,7 @@ foreach ($menu as $proj_dist => $submenu){
 
     echo "\nMENU BEGIN $proj_dist\n\n";
     foreach($submenu as $proj){
-	$page = file_get_contents($url[$proj]);
+	$page = file_get_contents($freeurl[$proj]);
 	$page_ok = preg_match("/200/",$http_response_header[0]);
 	//echo "$link-$http_response_header[0]\n";
 	if ($page_ok){

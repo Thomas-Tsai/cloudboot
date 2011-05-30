@@ -38,6 +38,8 @@ url.rewrite-once = (
 
 2.
 get drbloncloud
+update rom-image.ipxe
+chain http://yourserver/boot.gpxe
 run script build-image
 bash build-imag
 
