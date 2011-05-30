@@ -1,4 +1,0 @@
-#!gpxe
-set 209:string BOOTMENU
-set 210:string http://140.110.240.52/drbloncloud/
-chain ${210:string}pxelinux.0
