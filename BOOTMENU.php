@@ -33,6 +33,9 @@ say **********************************************
 
 ALLOWOPTIONS 1
 
+# simple menu title
+MENU TITLE xxxx.org, xxx.nchc.org.tw
+
 END;
 }
 
@@ -66,6 +69,7 @@ $url['drbl-testing']                       = "http://free.nchc.org.tw/drbl-live/
 $url['drbl-unstable']                      = "http://free.nchc.org.tw/drbl-live/unstable/";
 $url['gparted-stable']                     = "http://free.nchc.org.tw/gparted-live/stable/";
 $url['gparted-testing']                    = "http://free.nchc.org.tw/gparted-live/testing/";
+$url['freedos']				   = "http://140.110.240.52/drbloncloud/small_img/";
 
 ### global variable for project pattern which defined regular expression for iso link
 $pattern['clonezilla-stable']              = '/<a href.*clonezilla.*iso.*>(.*)<\/a>/';
@@ -77,32 +81,55 @@ $pattern['drbl-testing']                   = $pattern['drbl-stable'];
 $pattern['drbl-unstable']                  = $pattern['drbl-stable'];
 $pattern['gparted-stable']                 = '/<a href.*gparted.*iso.*>(.*)<\/a>/';
 $pattern['gparted-testing']                = $pattern['gparted-stable'];
+$pattern['freedos']			   = '/<a href.*freedos.img.*>(.*)<\/a>/';
+
+### menu layout
+$menu['clonezilla']		= array('clonezilla-stable', 'clonezilla-testing');
+$menu['clonezilla-alternative'] = array('clonezilla-alternative-stable', 'clonezilla-alternative-testing');
+$menu['drbl']			= array('drbl-stable', 'drbl-testing', 'drbl-unstable');
+$menu['gparted']		= array('gparted-stable', 'gparted-testing');
 
 print_menu_head();
 
 ### get download page and convert to pxelinux menu style ###
-foreach ($url as $proj => $link){
-    $page = file_get_contents($link);
-    $page_ok = preg_match("/200/",$http_response_header[0]);
-    //echo "$link-$http_response_header[0]\n";
-    if ($page_ok){
-	$iso = get_iso_from_page($page, $pattern[$proj]);
+foreach ($menu as $proj_dist => $submenu){
+
+    echo "MENU BEGIN $proj_dist\n\n";
+    foreach($submenu as $proj){
+	$page = file_get_contents($url[$proj]);
+	$page_ok = preg_match("/200/",$http_response_header[0]);
+	//echo "$link-$http_response_header[0]\n";
+	if ($page_ok){
+	    $iso = get_iso_from_page($page, $pattern[$proj]);
+	}
+	foreach ($iso as $version) {
+	    //label http-clonezilla-iso
+	    //    MENU LABEL http clonezilla iso
+	    //    kernel http://140.110.240.52/gpxe/memdisk 
+	    //    initrd http://140.110.240.52/gpxe/clonezilla-live-1.2.8-23-i686.iso
+	    //    append iso raw  
+	    //echo "$version<br>\n";
+	    echo "label $proj-$version\n";
+	    echo "\tMENU LABEL $proj-$version\n";
+	    echo "\tkernel $kernel\n";
+	    echo "\tinitrd $url[$proj]$version\n";
+	    echo "\tappend iso raw\n";
+	    echo "\n";
+	}
     }
-    foreach ($iso as $version) {
-	#label http-clonezilla-iso
-	#    MENU LABEL http clonezilla iso
-	#    kernel http://140.110.240.52/gpxe/memdisk 
-	#    initrd http://140.110.240.52/gpxe/clonezilla-live-1.2.8-23-i686.iso
-	#    append iso raw  
-	#echo "$version<br>\n";
-	echo "label $proj-$version\n";
-	echo "\tMENU LABEL $proj-$version\n";
-	echo "\tkernel $kernel\n";
-	echo "\tinitrd $link$version\n";
-	echo "\tappend iso raw\n";
-	echo "\n";
-    }
+    echo "MENU END\n\n";
 }
+echo <<<FREEDOS
+label freedos
+    MENU LABEL freedos
+    kernel http://140.110.240.52/drbloncloud/memdisk
+    initrd http://140.110.240.52/drbloncloud/small_img/freedos.img
+
+label memtest
+    MENU LABEL memtest
+    kernel http://140.110.240.52/drbloncloud/small_img/memtest
+
+FREEDOS;
 
 ### end of main ###
 ?>
