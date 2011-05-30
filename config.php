@@ -1,25 +1,28 @@
 <?php
-### TODO ###
-#1. SSL support?
-#2. change background.png
-### set page to text mode ###
 
+##important###################################
+# please set rewrite rule to web service like:
+# BOOTMENU  => BOOTMENU.php
+# boot.gpxe => boot.gpxe.php
+##############################################
 
 ### global variable for kernel url
 $local_url  = "http://140.110.240.52/drbloncloud";
-$kernel	    = "memdisk";  # kernel link for pxelinux
+$kernel	    = "pxe/memdisk";  # kernel link for pxelinux
+$boot_menu_path = "BOOTMENU";//BOOTMENU.php rewrite to BOOTMENU, rewrite needed
+$pxelinux_file = "pxelinux.0";
 $kernel_url = "$local_url/$kernel";
 $freedos_url = "$local_url/small_img/freedos.img";
 $memtest_url = "$local_url/small_img/memtest";
 $agent_url   = "$local_url/get_image.php";
 
 ### global variable for pxe menu
-$pxe_vesamenu	= "vesamenu.c32";
+$pxe_vesamenu	= "pxe/vesamenu.c32";
 $pxe_timeout	= "70";
 $pxe_prompt	= "0";
 $pxe_noescape	="0";
-$pxe_background = "drblwp.png";
-$pxe_menu_title ="MENU TITLE ...xxxx.org, xxx.nchc.org.tw";
+$pxe_background = "pxe/drblwp.png";
+$pxe_menu_title ="MENU TITLE free.nchc.org.tw";
 
 ### global variable for project download link
 $url['clonezilla-stable']                  = "http://free.nchc.org.tw/clonezilla-live/stable/";
