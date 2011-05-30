@@ -13,16 +13,19 @@
 1. installation
 
 install php and lighttp
+$ apt-get install lighttpd php5-cgi php5-common
 
-configure php
+configure and set /etc/php5/cgi/php.ini
 error_reporting = E_ALL & ~E_NOTICE
 display_errors = Off
+
 if you want debug, please set
 error_reporting = E_ALL & ~E_DEPRECATED
 display_errors = On
 
-configure lighttp
-set rewrite rule
+configure lighttpd.conf
+$ ghttpd-enable-mod cgi
+#set rewrite rule
 server.modules = (
 ...
         "mod_rewrite",
