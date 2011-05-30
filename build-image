@@ -1,0 +1,11 @@
+#!/bin/bash
+current_path=`pwd`
+ipxe_src="$current_path/rom-o-matic/src/"
+ipxe_bin="$current_path/rom-o-matic/src/bin"
+cd $ipxe_src
+make EMBEDDED_IMAGE=/home/thomas/work_house/drbloncloud/rom-image.ipxe
+cd $ipxe_bin
+rm *.tmp
+rm *.map
+cp ipxe* $current_path/ipxe_image/
+cd $current_path

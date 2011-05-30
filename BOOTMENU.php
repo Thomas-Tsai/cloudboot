@@ -1,25 +1,24 @@
 <?php
-### TODO ###
-#1. SSL support?
-#2. change background.png
-#3. 
-### set page to text mode ###
+// Get utility functions and set globals
+require "config.php";
 header ( "Content-type: text/plain" );
 
 ### print pxe menu, copy from pxelinux.cfg/default ###
 function print_menu_head(){
-    $vesamenu = "vesamenu.c32";
-    $timeout = "70";
-    $prompt= "0";
-    $noescape ="1";
-    $background = "drblwp.png";
+    global $pxe_vesamenu;
+    global $pxe_timeout;
+    global $pxe_prompt;
+    global $pxe_noescape;
+    global $pxe_background;
+    global $pxe_menu_title;
+
     echo <<< END
-default $vesamenu
-timeout $timeout
-prompt $prompt
-noescape $noescape
+default $pxe_vesamenu
+timeout $pxe_timeout
+prompt $pxe_prompt
+noescape $pxe_noescape
 MENU MARGIN 5
-MENU BACKGROUND $background
+MENU BACKGROUND $pxe_background
 MENU COLOR UNSEL 7;32;41 #c0000090 #00000000
 MENU COLOR TIMEOUT_MSG 7;32;41 #c0000090 #00000000
 MENU COLOR TIMEOUT 7;32;41 #c0000090 #00000000
@@ -33,10 +32,9 @@ say **********************************************
 
 ALLOWOPTIONS 1
 
-# simple menu title
-MENU TITLE xxxx.org, xxx.nchc.org.tw
-
 END;
+# simple menu title
+echo $pxe_menu_title."\n";
 }
 
 ### function to find iso name and link ###
@@ -55,46 +53,59 @@ function get_iso_from_page($page, $regx){
     return $proj_iso;
 }
 
+function print_default_menu_entry(){
+    global $agent_url, $kernel_url, $url, $pattern, $default_proj, $default_arch;
+    $page = file_get_contents($url[$default_proj]);
+    $page_ok = preg_match("/200/",$http_response_header[0]);
+    //echo "$link-$http_response_header[0]\n";
+
+    if ($page_ok){
+	$iso = get_iso_from_page($page, $pattern[$default_proj]);
+    } else {
+	return;	
+    }
+
+    $def_entry=$iso[0];
+    if (sizeof($iso)>1){
+	foreach ($iso as $file) {
+	    if (preg_match("/686/", $file)){
+		$def_entry = $file;
+	    } elseif(preg_match("/86/", $file)) {
+		$def_entry = $file;
+	    }
+	}
+	if ($def_entry == ""){
+	    $def_entry=$iso[0];    
+	}
+    } else {
+	$def_entry=$iso[0];
+    }
+
+    if (preg_match("/amd64/", $def_entry)){
+	$arch = "x86_64 arch";	
+    }else{
+	$arch = "x86 arch";
+    }
+    echo "label $def_entry\n";
+    echo "\tMENU LABEL $def_entry\n";
+    echo "\tMENU DEFAULT\n";
+    echo "\tkernel $kernel_url\n";
+    echo "\tinitrd $agent_url?proj=$default_proj&file=$def_entry\n";
+    echo "\tappend iso raw\n";
+    echo "\tTEXT HELP\n";
+    echo "\tBooting to $default_proj for $arch\n";
+    echo "\tENDTEXT\n";
+}
 
 ### main ###
-$kernel = "http://140.110.240.52/drbloncloud/memdisk";  # kernel link for pxelinux
-
-### global variable for project download link
-$url['clonezilla-stable']                  = "http://free.nchc.org.tw/clonezilla-live/stable/";
-$url['clonezilla-testing']                 = "http://free.nchc.org.tw/clonezilla-live/testing/";
-$url['clonezilla-alternative-stable']      = "http://free.nchc.org.tw/clonezilla-live/alternative/stable/";
-$url['clonezilla-alternative-testing']     = "http://free.nchc.org.tw/clonezilla-live/alternative/testing/";
-$url['drbl-stable']                        = "http://free.nchc.org.tw/drbl-live/stable/";
-$url['drbl-testing']                       = "http://free.nchc.org.tw/drbl-live/testing/";
-$url['drbl-unstable']                      = "http://free.nchc.org.tw/drbl-live/unstable/";
-$url['gparted-stable']                     = "http://free.nchc.org.tw/gparted-live/stable/";
-$url['gparted-testing']                    = "http://free.nchc.org.tw/gparted-live/testing/";
-$url['freedos']				   = "http://140.110.240.52/drbloncloud/small_img/";
-
-### global variable for project pattern which defined regular expression for iso link
-$pattern['clonezilla-stable']              = '/<a href.*clonezilla.*iso.*>(.*)<\/a>/';
-$pattern['clonezilla-testing']             = $pattern['clonezilla-stable'];
-$pattern['clonezilla-alternative-stable']  = $pattern['clonezilla-stable'];
-$pattern['clonezilla-alternative-testing'] = $pattern['clonezilla-stable'];
-$pattern['drbl-stable']                    = '/<a href.*drbl.*iso.*>(.*)<\/a>/';
-$pattern['drbl-testing']                   = $pattern['drbl-stable']; 
-$pattern['drbl-unstable']                  = $pattern['drbl-stable'];
-$pattern['gparted-stable']                 = '/<a href.*gparted.*iso.*>(.*)<\/a>/';
-$pattern['gparted-testing']                = $pattern['gparted-stable'];
-$pattern['freedos']			   = '/<a href.*freedos.img.*>(.*)<\/a>/';
-
-### menu layout
-$menu['clonezilla']		= array('clonezilla-stable', 'clonezilla-testing');
-$menu['clonezilla-alternative'] = array('clonezilla-alternative-stable', 'clonezilla-alternative-testing');
-$menu['drbl']			= array('drbl-stable', 'drbl-testing', 'drbl-unstable');
-$menu['gparted']		= array('gparted-stable', 'gparted-testing');
-
+global $kernel_url, $url, $pattern, $menu, $freedos_url, $memtest_url, $default_proj, $default_arch;
 print_menu_head();
+print_default_menu_entry();
 
 ### get download page and convert to pxelinux menu style ###
 foreach ($menu as $proj_dist => $submenu){
 
-    echo "MENU BEGIN $proj_dist\n\n";
+    echo "\nMENU BEGIN $proj_dist\n\n";
     foreach($submenu as $proj){
 	$page = file_get_contents($url[$proj]);
 	$page_ok = preg_match("/200/",$http_response_header[0]);
@@ -102,35 +113,41 @@ foreach ($menu as $proj_dist => $submenu){
 	if ($page_ok){
 	    $iso = get_iso_from_page($page, $pattern[$proj]);
 	}
-	foreach ($iso as $version) {
+	foreach ($iso as $file) {
 	    //label http-clonezilla-iso
 	    //    MENU LABEL http clonezilla iso
 	    //    kernel http://140.110.240.52/gpxe/memdisk 
 	    //    initrd http://140.110.240.52/gpxe/clonezilla-live-1.2.8-23-i686.iso
 	    //    append iso raw  
 	    //echo "$version<br>\n";
-	    echo "label $proj-$version\n";
-	    echo "\tMENU LABEL $proj-$version\n";
-	    echo "\tkernel $kernel\n";
-	    echo "\tinitrd $url[$proj]$version\n";
+	    if (preg_match("/amd64/", $file)){
+		$arch = "x86_64 arch";	
+	    }else{
+		$arch = "x86 arch";
+	    }
+	    echo "label $file\n";
+	    echo "\tMENU LABEL $file\n";
+	    echo "\tkernel $kernel_url\n";
+	    echo "\tinitrd $agent_url?proj=$proj&file=$file\n";
 	    echo "\tappend iso raw\n";
-	    echo "\n";
+	    echo "\tTEXT HELP\n";
+	    echo "\tBooting to $proj for $arch\n";
+	    echo "\tENDTEXT\n";
 	}
     }
-    echo "MENU END\n\n";
+    echo "\nMENU END\n\n";
 }
-echo <<<FREEDOS
+echo <<<OTHERMENU
 label freedos
     MENU LABEL freedos
-    kernel http://140.110.240.52/drbloncloud/memdisk
-    initrd http://140.110.240.52/drbloncloud/small_img/freedos.img
+    kernel $kernel_url
+    initrd $freedos_url
 
 label memtest
     MENU LABEL memtest
-    kernel http://140.110.240.52/drbloncloud/small_img/memtest
+    kernel $memtest_url
 
-FREEDOS;
-
+OTHERMENU;
 ### end of main ###
 ?>
 
