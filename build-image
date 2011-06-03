@@ -1,17 +1,20 @@
 #!/bin/bash
+keep_ipxe_make_dir="yes"
 current_path=`pwd`
 rom_script="$current_path/rom-image.ipxe"
 ipxe_image_path="$current_path/ipxe_image"
 ipxe_path="ipxe"
 ipxe_src="$current_path/$ipxe_path/src/"
 ipxe_bin="$current_path/$ipxe_path/src/bin"
+
 build_rom_script(){
 
-    ip=`cat config.php |grep site | grep -v url|awk {'print $2'}|sed  s/\"//g| sed s/=//g | sed s/\;//`
+    ip=`cat config.php |grep site | grep -v url|awk {'print $3'} | sed  s/\"//g | sed s/=//g | sed s/\;//`
+    liveipxe_path=`cat config.php | grep liveipxe_path | grep -v http | awk {'print $3'} | sed  s/\"//g | sed s/=//g | sed s/\;//`
     cat <<-IPXE > $rom_script
 #!gpxe
 dhcp net0
-chain http://$ip/drbloncloud/boot.gpxe 
+chain http://$ip/$liveipxe_path/boot.gpxe 
 IPXE
 
 }
@@ -23,7 +26,7 @@ copy_rom() {
     rm $ipxe_bin/ipxe*.tmp
     rm $ipxe_bin/ipxe*.map
     cp $ipxe_bin/ipxe* $ipxe_image_path
-    rm -rf $ipxe_path
+    [ $keep_ipxe_make_dir == "NO" ] && rm -rf $ipxe_path
 }
 
 build_rom_script

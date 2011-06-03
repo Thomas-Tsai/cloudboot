@@ -98,7 +98,8 @@ function print_default_menu_entry(){
 }
 
 ### main ###
-global $kernel_url, $freeurl, $pattern, $menu, $freedos_url, $memtest_url, $default_proj, $default_arch;
+global $kernel_url, $freeurl, $pattern, $menu, $freedos_url, $memtest_url, $default_proj, $default_arch, $enable_netinstall;
+
 print_menu_head();
 print_default_menu_entry();
 
@@ -114,12 +115,6 @@ foreach ($menu as $proj_dist => $submenu){
 	    $iso = get_iso_from_page($page, $pattern[$proj]);
 	}
 	foreach ($iso as $file) {
-	    //label http-clonezilla-iso
-	    //    MENU LABEL http clonezilla iso
-	    //    kernel http://140.110.240.52/gpxe/memdisk 
-	    //    initrd http://140.110.240.52/gpxe/clonezilla-live-1.2.8-23-i686.iso
-	    //    append iso raw  
-	    //echo "$version<br>\n";
 	    if (preg_match("/amd64/", $file)){
 		$arch = "x86_64 arch";	
 	    }else{
@@ -135,6 +130,30 @@ foreach ($menu as $proj_dist => $submenu){
 	    echo "\tENDTEXT\n";
 	}
     }
+    echo "\nMENU END\n\n";
+}
+if ($enable_netinstall) {
+    echo "\nMENU BEGIN NETINSTALL\n\n";
+	$netinstall_page = file_get_contents($freeurl['netinstall']);
+	$page_ok = preg_match("/200/",$http_response_header[0]);
+	if ($page_ok){
+	    $img = get_iso_from_page($netinstall_page, $pattern['netinstall']);
+	}
+	foreach ($img as $file) {
+	    if (preg_match("/amd64/", $file)){
+		$arch = "x86_64 arch";	
+	    }else{
+		$arch = "x86 arch";
+	    }
+	    echo "label $file\n";
+	    echo "\tMENU LABEL $file\n";
+	    echo "\tkernel $freeurl[netinstall]vmlinuz-netinstall-$file\n";
+//	    echo "\tinitrd $freeurl[netinstall]initrd-netinstall-$file\n";
+	    echo "\tappend initrd=$freeurl[netinstall]initrd-netinstall-$file.img ramdisk_size=128000\n";
+	    echo "\tTEXT HELP\n";
+	    echo "\tNetinstall $file for $arch\n";
+	    echo "\tENDTEXT\n";
+	}
     echo "\nMENU END\n\n";
 }
 echo <<<OTHERMENU

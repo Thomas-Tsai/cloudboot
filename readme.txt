@@ -40,7 +40,7 @@ url.rewrite-once = (
 get drbloncloud
 update rom-image.ipxe
 chain http://yourserver/boot.gpxe
-run script build-image
+run script build-image and don't forget install build-essential and genisoimage
 bash build-imag
 
 3. config url
