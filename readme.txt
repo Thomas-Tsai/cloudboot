@@ -39,7 +39,10 @@ url.rewrite-once = (
     "drbloncloud/boot.gpxe"  => "$0.php" 
 )
 
-2. prepare web applications
+2. config
+edit config.php
+
+3. prepare web applications
 ## source code
 get cloudboot source code from git
 git clone someone@free.nchc.org.tw:$port/home/gitpool/cloudboot/
@@ -52,9 +55,6 @@ bash build-imag
 
 ## Netinstall
 run script build-netinstall to get all netinstall image and don't forget install drbl
-
-3. config
-edit config.php
 
 4. test and done
 boot from ipxe.iso

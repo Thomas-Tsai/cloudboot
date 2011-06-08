@@ -11,11 +11,11 @@ ver=`cat VERSION`
 build_rom_script(){
 
     ip=`cat config.php |grep site | grep -v url|awk {'print $3'} | sed  s/\"//g | sed s/=//g | sed s/\;//`
-    liveipxe_path=`cat config.php | grep liveipxe_path | grep -v http | awk {'print $3'} | sed  s/\"//g | sed s/=//g | sed s/\;//`
+    local_path=`cat config.php | grep local_path | grep -v http | awk {'print $3'} | sed  s/\"//g | sed s/=//g | sed s/\;//`
     cat <<-IPXE > $rom_script
 #!gpxe
 dhcp net0
-chain http://$ip/$liveipxe_path/boot.gpxe 
+chain http://$ip/$local_path/boot.gpxe 
 IPXE
 
 }
@@ -27,12 +27,20 @@ copy_rom() {
     rm $ipxe_bin/ipxe*.tmp
     rm $ipxe_bin/ipxe*.map
     #ipxe.dsk  ipxe.iso  ipxe.lkrn  ipxe.usb
-    cp $ipxe_bin/ipxe.iso $ipxe_image_path/ipxe_$ver.iso
-    cp $ipxe_bin/ipxe.dsk $ipxe_image_path/ipxe_$ver.dsk
-    cp $ipxe_bin/ipxe.lkrn $ipxe_image_path/ipxe_$ver.lkrn
-    cp $ipxe_bin/ipxe.usb $ipxe_image_path/ipxe_$ver.usb
+    cp $ipxe_bin/ipxe.iso  $ipxe_image_path/cloudboot_$ver.iso
+    cp $ipxe_bin/ipxe.dsk  $ipxe_image_path/cloudboot_$ver.dsk
+    cp $ipxe_bin/ipxe.lkrn $ipxe_image_path/cloudboot_$ver.lkrn
+    cp $ipxe_bin/ipxe.usb  $ipxe_image_path/cloudboot_$ver.usb
     [ $keep_ipxe_make_dir == "NO" ] && rm -rf $ipxe_path
+}
+
+enable_custom_rom_page(){
+    enable_custom_rom=`grep enable_custom_rom config.php  | sed -e 's/$enable_custom_rom//' | sed -e 's/=//g' | sed -e 's/ //g' | sed -e 's/;//'`
+    if [ $enable_custom_rom == 'true' -o $enable_custom_rom == 'TRUE' ]; then
+        make -C $ipxe_src bin/NIC
+    fi
 }
 
 build_rom_script
 copy_rom
+enable_custom_rom_page
