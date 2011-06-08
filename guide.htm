@@ -3,15 +3,27 @@
 	<TITLE>Start</TITLE>
     </HEAD>
     <BODY>
-	<P>開機步驟：
+	開機步驟：
 	<OL>
-	<LI>光碟開機</LI>
-	下載 ipxe.dsk 並以指令 "cat bin/ipxe.dsk > /dev/fd0" 安裝ipxe.dsk到軟機片中。
-	<LI>USB碟開機</LI>
-	下載 ipxe.usb 並以指令 "cat bin/ipxe.usb > /dev/sdX" 安裝ipxe.usb到USB跌中。
-	<LI>軟碟開機</LI>
-	下載 ipxe.iso 並燒錄到光碟機中，就完成ipxe的安裝了。
+	<LI>開機媒介選擇：</LI>
+	    <OL>
+	    <LI>光碟開機</LI>
+		下載 ipxe.dsk 並以指令 "cat bin/ipxe.dsk > /dev/fd0" 安裝ipxe.dsk到軟機片中。
+	    <LI>USB碟開機</LI>
+		下載 ipxe.usb 並以指令 "cat bin/ipxe.usb > /dev/sdX" 安裝ipxe.usb到USB碟中。
+	    <LI>軟碟開機</LI>
+		下載 ipxe.iso 並燒錄到光碟機中，就完成ipxe的安裝了。
+	    </OL>
+	<LI>選擇雲端應用程式，目前支援的有：</LI>
+	    <OL>
+		<LI>DRBL Live</LI>
+		<LI>Clonezilla Live</LI>
+		<LI>GParted Live</LI>
+		<LI>Netinstall Linux</LI>
+		<LI>Freedos</LI>
+		<LI>Memtest</LI>
+	    </OL>
+	<LI>自動下載與啟動</LI>
 	</OL>
-	</P>
     </BODY>
 </HTML>
