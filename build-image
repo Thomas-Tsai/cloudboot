@@ -6,6 +6,7 @@ ipxe_image_path="$current_path/ipxe_image"
 ipxe_path="ipxe"
 ipxe_src="$current_path/$ipxe_path/src/"
 ipxe_bin="$current_path/$ipxe_path/src/bin"
+ver=`cat VERSION`
 
 build_rom_script(){
 
@@ -25,7 +26,11 @@ copy_rom() {
     [ -f $rom_script ] && make -C $ipxe_src EMBEDDED_IMAGE=$rom_script
     rm $ipxe_bin/ipxe*.tmp
     rm $ipxe_bin/ipxe*.map
-    cp $ipxe_bin/ipxe* $ipxe_image_path
+    #ipxe.dsk  ipxe.iso  ipxe.lkrn  ipxe.usb
+    cp $ipxe_bin/ipxe.iso $ipxe_image_path/ipxe_$ver.iso
+    cp $ipxe_bin/ipxe.dsk $ipxe_image_path/ipxe_$ver.dsk
+    cp $ipxe_bin/ipxe.lkrn $ipxe_image_path/ipxe_$ver.lkrn
+    cp $ipxe_bin/ipxe.usb $ipxe_image_path/ipxe_$ver.usb
     [ $keep_ipxe_make_dir == "NO" ] && rm -rf $ipxe_path
 }
 
