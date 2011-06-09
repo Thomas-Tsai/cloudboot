@@ -14,10 +14,62 @@ build_rom_script(){
     local_path=`cat config.php | grep local_path | grep -v http | awk {'print $3'} | sed  s/\"//g | sed s/=//g | sed s/\;//`
     cat <<-IPXE > $rom_script
 #!gpxe
-dhcp net0
-chain http://$ip/$local_path/boot.gpxe 
-IPXE
+set filename http://$ip/$local_path/boot.gpxe
+:ask_network
+echo Welcome to CLOUDBOOT
+echo Current Network status:
+ifstat
+route
+echo
+prompt --timeout 10000 Press anykey for cloudboot iPXE menu or autoboot after 10 secs && || autoboot
+echo a) AUTO config network (Default)
+echo b) Getting IP address from DHCP Server
+echo c) Manual config network
+echo d) Entering iPXE Shell
+echo e) Config iPXE all options
+read answer
+iseq \${answer} a && autoboot ||
+iseq \${answer} b && goto setup_dhcp ||
+iseq \${answer} c && goto setup_ipconfig ||
+iseq \${answer} d && shell ||
+iseq \${answer} e && config ||
+goto ask_network
 
+:setup_dhcp
+dhcp && chain \${filename} || goto ask_network
+
+:ask_next
+echo a) reset ip address
+echo b) back to top menu
+read next
+iseq \${next} a && goto setup_ipconfig ||
+iseq \${next} b && goto ask_network ||
+
+:setup_ipconfig
+echo -n which network card you want to config (net0, net1 or netxxx) \${} && read netcard
+isset \${netcard} && echo config \${netcard} || goto setup_ipconfig
+:set_ip
+echo -n \${netcard} ip address: \${} && read address
+set \${netcard}/ip \${address} || goto set_ip
+:set_nm
+echo -n \${netcard} netmask: \${} && read netmask
+set \${netcard}/netmask \${netmask} || goto set_nm
+:set_gw
+echo -n \${netcard} gateway: \${} && read gateway
+set \${netcard}/gateway \${gateway} || goto set_gw
+:set_dns
+echo -n DNS Server: \${} && read dns
+set \${dns} || goto set_dns
+echo New network configure:
+ifstat
+route
+echo -n Is it correct? (y/n) \${} && read correct
+iseq \${correct} y && chain \${filename} || goto ask_network
+iseq \${correct} Y && chain \${filename} || goto ask_network
+iseq \${correct} n && goto ask_next ||
+iseq \${correct} N && goto ask_next ||
+
+IPXE
 }
 
 copy_rom() {

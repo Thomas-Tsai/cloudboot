@@ -1,3 +1,0 @@
-#!gpxe
-dhcp net0
-chain http://140.110.240.48/cloudboot/boot.gpxe 
