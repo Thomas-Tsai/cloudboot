@@ -1,11 +1,26 @@
 #!/bin/bash
+
+
+
+# Load Tux2live setting and functions
+cloudboot_root_path=$(cd $(dirname .) ;pwd)
+
+# Load global configuration
+[ -f "$cloudboot_root_path/conf/cloudboot.conf" ] &&  . $cloudboot_root_path/conf/cloudboot.conf
+
+# Load sub function for global usage
+[ -f "$cloudboot_root_path/functions.lib" ] &&  . $cloudboot_root_path/functions.lib
+
+#######
+# Main
+#######
+
 keep_ipxe_make_dir="yes"
-current_path=`pwd`
-rom_script="$current_path/rom-image.ipxe"
-ipxe_image_path="$current_path/ipxe_image"
+rom_script="$cloudboot_root_path/rom-image.ipxe"
+ipxe_image_path="$cloudboot_root_path/ipxe_image"
 ipxe_path="ipxe"
-ipxe_src="$current_path/$ipxe_path/src/"
-ipxe_bin="$current_path/$ipxe_path/src/bin"
+ipxe_src="$cloudboot_root_path/$ipxe_path/src/"
+ipxe_bin="$cloudboot_root_path/$ipxe_path/src/bin"
 ver=`cat VERSION`
 
 build_rom_script(){
@@ -74,12 +89,13 @@ IPXE
 
 copy_rom() {
     [ ! -d $ipxe_image_path ] && mkdir $ipxe_image_path
-    [ ! -d $current_path/$ipxe_path ] && git clone git://git.ipxe.org/ipxe.git $ipxe_path
+    [ ! -d $cloudboot_root_path/$ipxe_path ] && git clone git://git.ipxe.org/ipxe.git $ipxe_path
     [ -f $rom_script ] && make -C $ipxe_src EMBEDDED_IMAGE=$rom_script
     rm $ipxe_bin/ipxe*.tmp
     rm $ipxe_bin/ipxe*.map
     #ipxe.dsk  ipxe.iso  ipxe.lkrn  ipxe.usb
-    cp $ipxe_bin/ipxe.iso  $ipxe_image_path/cloudboot_$ver.iso
+    #cp $ipxe_bin/ipxe.iso  $ipxe_image_path/cloudboot_$ver.iso
+    _patch_iso $ipxe_bin/ipxe.iso  $ipxe_image_path/cloudboot_$ver.patch.iso
     cp $ipxe_bin/ipxe.dsk  $ipxe_image_path/cloudboot_$ver.dsk
     cp $ipxe_bin/ipxe.lkrn $ipxe_image_path/cloudboot_$ver.lkrn
     cp $ipxe_bin/ipxe.usb  $ipxe_image_path/cloudboot_$ver.usb

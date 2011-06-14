@@ -1,0 +1,78 @@
+#!/bin/sh
+
+####################################################
+# Tux2live Project
+#
+# Name: functions.lib
+#
+# Description: Define sub functions for global usage during tux2live building
+#
+# Author:
+#			
+#			
+####################################################
+
+_LOAD_CLOUDBOOT_FUNCTIONS=y
+
+# setup some parameters for color output. The variables should be already 
+# defined in the /etc/init.d/functions in RH-like distribution 
+
+[ -z "$SETCOLOR_SUCCESS" ] && SETCOLOR_SUCCESS="echo -en \\033[1;32m"
+[ -z "$SETCOLOR_FAILURE" ] && SETCOLOR_FAILURE="echo -en \\033[1;31m"
+[ -z "$SETCOLOR_WARNING" ] && SETCOLOR_WARNING="echo -en \\033[1;33m"
+[ -z "$SETCOLOR_NORMAL"  ] && SETCOLOR_NORMAL="echo -en \\033[0;39m"
+
+
+_USAGE(){
+	echo "Usage: $0 [-v] [-b|--batch] [-c|--checkenv][-d|--debug] [-p|--purge] [-d|--debug] [--help] [-I|--import-user user_id] [-o|--isoname given_name.iso] [--mkinitrd] [--mkrootfs] [--mkiso] [--outputdir /full/path/] [--tmpdir /full/path] [--rootfs_method [unionfs|dm_snapshot]] [--drbl-mode]"
+	echo " --mkiso	Create iso, not for all action"
+	echo " -b, --batch        Batch mode, it wouldn't import any user data if no use '-I user' in batch mode"
+	echo " -c, --checkenv     Check if system does prepare need component to run tux2live"
+	echo " -d, --debug        Debug mode: keep all tmp file and display each used commands "
+	echo " -p, --purge        Purge mode: remove all input and unnecessary output after each action"
+	echo " -v, --verbose       Verbose mode"
+	echo "Advance usage:"
+	echo " --drbl-mode        Use drbl clients as live root filesystem"
+	echo "Ex:"
+	echo "$0"
+	echo "  ( Interactive mode )"
+	echo "$0 -b --mkrootfs --mkrootfs --mkiso --tmpdir /my_path/tmp --outputdir /my_path/output -o my-tux2live-cd.iso -I account"
+	echo "  ( Batch mode to create rootfs and iso files for live system with assigned 'tmp','output' directory and import 'account' data then named the iso as 'tux2live-cd.iso' )"
+
+}
+
+_patch_iso(){
+
+	input_iso=$1
+	output_iso=$2
+
+	isoloop_dir=`mktemp -dt iso.loop.XXXXXX`
+	isobuild_dir=`mktemp -dt iso.build.XXXXXX`
+
+	mkisofs=`which mkisofs genisoimage 2>/dev/null | head -n1`
+	if [ -z $mkisofs ]
+	then
+		echo $0: mkisofs or genisoimage not found, please install or set PATH
+		exit 1
+	fi
+
+	# isohybrid will be used if available
+	isohybrid=`which isohybrid 2>/dev/null`
+
+	[ $UID = 0 ] || echo "Switch as super user ..."
+	sudo mount -t auto  -o loop $input_iso $isoloop_dir
+	[ $? = 0 ] || ( echo "mount iso faild ! exit !" ; exit 2)
+	cp $isoloop_dir/* $isobuild_dir
+	cp -a $cloudboot_root_path/utils $isobuild_dir
+	echo "include isolinux.cfg" > $isobuild_dir/syslinux.cfg
+	chmod -R 755 $isobuild_dir
+
+	# mkiso
+	$mkisofs -quiet -R -r -l -o $output_iso -c boot.cat -b isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table $isobuild_dir
+	# hybrid iso file
+	[ -n "$isohybrid" ] && $isohybrid $out >/dev/null
+
+	sudo umount $isoloop_dir
+	rm -rf $isoloop_dir $isobuild_dir
+}
+
