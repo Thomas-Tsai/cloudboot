@@ -62,6 +62,7 @@ iseq \${next} b && goto ask_network ||
 
 :setup_ipconfig
 echo -n which network card you want to config (net0, net1 or netxxx) \${} && read netcard
+ifopen \${netcard} || goto setup_ipconfig
 isset \${netcard} && echo config \${netcard} || goto setup_ipconfig
 :set_ip
 echo -n \${netcard} ip address: \${} && read address
