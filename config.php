@@ -8,15 +8,15 @@
 
 ### options
 $enable_sourceforge = false;
-$enable_netinstall = true;  # run 'drbl-netinstall -d xxx -i all'
+$enable_netinstall = false;  # run 'drbl-netinstall -d xxx -i all'
 $enable_custom_rom = true;
 
 ### global variable for kernel url
 $site	    = "140.110.240.48";
-$local_path = "cloudboot";
+$local_path = "cloudboot-dev";
 $local_url  = "http://$site/$local_path";
-$kernel	    = "pxe/memdisk";  # kernel link for pxelinux
-$boot_menu_path = "BOOTMENU"; # BOOTMENU.php rewrite to BOOTMENU, rewrite needed
+$kernel	    = "pxe/memdisk.c32";  # kernel link for pxelinux
+$boot_menu_path = "BOOTMENU.php"; # BOOTMENU.php rewrite to BOOTMENU, rewrite needed
 $pxelinux_file = "pxe/pxelinux.0";
 $kernel_url = "$local_url/$kernel";
 $freedos_url = "$local_url/small_img/freedos.img";
@@ -41,8 +41,8 @@ $sfurl['drbl-testing']                       = "http://prdownloads.sourceforge.n
 $sfurl['drbl-unstable']                      = "http://prdownloads.sourceforge.net/gparted/";
 $sfurl['gparted-stable']                     = "http://prdownloads.sourceforge.net/gparted/";
 $sfurl['gparted-testing']                    = "http://prdownloads.sourceforge.net/gparted/";
-$sfurl['freedos']			     = "$local_url/small_img/";
-$sfurl['netinstall']		             = "$local_url/netinstall_img/";
+$sfurl['freedos']			     = "http://prdownloads.sourceforge.net/cloudboot/small_img/";
+$sfurl['netinstall']		             = "http://prdownloads.sourceforge.net/cloudboot/small_img/";
 
 ### global variable for project download link from free
 $freeurl['clonezilla-stable']                  = "http://free.nchc.org.tw/clonezilla-live/stable/";

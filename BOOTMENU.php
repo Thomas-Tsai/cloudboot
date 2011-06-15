@@ -148,7 +148,6 @@ if ($enable_netinstall) {
 	    echo "label $file\n";
 	    echo "\tMENU LABEL $file\n";
 	    echo "\tkernel $freeurl[netinstall]vmlinuz-netinstall-$file\n";
-//	    echo "\tinitrd $freeurl[netinstall]initrd-netinstall-$file\n";
 	    echo "\tappend initrd=$freeurl[netinstall]initrd-netinstall-$file.img ramdisk_size=128000\n";
 	    echo "\tTEXT HELP\n";
 	    echo "\tNetinstall $file for $arch\n";

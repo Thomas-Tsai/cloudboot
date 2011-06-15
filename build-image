@@ -29,7 +29,7 @@ build_rom_script(){
     local_path=`cat config.php | grep local_path | grep -v http | awk {'print $3'} | sed  s/\"//g | sed s/=//g | sed s/\;//`
     cat <<-IPXE > $rom_script
 #!gpxe
-set filename http://$ip/$local_path/boot.gpxe
+set filename http://$ip/$local_path/boot.gpxe.php
 :ask_network
 echo Welcome to CLOUDBOOT
 echo Current Network status:
