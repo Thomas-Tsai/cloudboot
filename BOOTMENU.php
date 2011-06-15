@@ -98,7 +98,7 @@ function print_default_menu_entry(){
 }
 
 ### main ###
-global $kernel_url, $freeurl, $pattern, $menu, $freedos_url, $memtest_url, $default_proj, $default_arch, $enable_netinstall;
+global $kernel_url, $freeurl, $pattern, $menu, $freedos_url, $memtest_url, $default_proj, $default_arch, $enable_netinstall, $enable_sourceforge;
 
 print_menu_head();
 print_default_menu_entry();
@@ -147,25 +147,30 @@ if ($enable_netinstall) {
 	    }
 	    echo "label $file\n";
 	    echo "\tMENU LABEL $file\n";
-	    echo "\tkernel $freeurl[netinstall]vmlinuz-netinstall-$file\n";
-	    echo "\tappend initrd=$freeurl[netinstall]initrd-netinstall-$file.img ramdisk_size=128000\n";
+	    if ($enable_sourceforge == true) {
+		echo "\tkernel $sfurl[netinstall]vmlinuz-netinstall-$file\n";
+		echo "\tappend initrd=$sfurl[netinstall]initrd-netinstall-$file.img ramdisk_size=128000\n";
+	    } else {
+		echo "\tkernel $freeurl[netinstall]vmlinuz-netinstall-$file\n";
+		echo "\tappend initrd=$freeurl[netinstall]initrd-netinstall-$file.img ramdisk_size=128000\n";
+	    }
 	    echo "\tTEXT HELP\n";
 	    echo "\tNetinstall $file for $arch\n";
 	    echo "\tENDTEXT\n";
 	}
     echo "\nMENU END\n\n";
 }
-echo <<<OTHERMENU
-label freedos
-    MENU LABEL freedos
-    kernel $kernel_url
-    initrd $freedos_url
 
-label memtest
-    MENU LABEL memtest
-    kernel $memtest_url
 
-OTHERMENU;
+echo "label freedos\n";
+echo "    MENU LABEL freedos\n";
+echo "    kernel $kernel_url\n";
+echo "    initrd $freedos_url\n";
+echo "\n";
+echo "label memtest\n";
+echo "    MENU LABEL memtest\n";
+echo "    kernel $memtest_url\n";
+echo "\n";
 ### end of main ###
 ?>
 
