@@ -13,9 +13,9 @@ $enable_custom_rom = true;
 
 ### global variable for kernel url
 $site	    = "140.110.240.48";
-$local_path = "cloudboot-dev";
+$local_path = "cloudboot";
 $local_url  = "http://$site/$local_path";
-$kernel	    = "pxe/memdisk.c32";  # kernel link for pxelinux
+$kernel	    = "pxe/memdisk";  # kernel link for pxelinux
 $boot_menu_path = "BOOTMENU.php"; # BOOTMENU.php rewrite to BOOTMENU, rewrite needed
 $pxelinux_file = "pxe/pxelinux.0";
 $kernel_url = "$local_url/$kernel";
