@@ -95,7 +95,7 @@ copy_rom() {
     rm $ipxe_bin/ipxe*.map
     #ipxe.dsk  ipxe.iso  ipxe.lkrn  ipxe.usb
     #cp $ipxe_bin/ipxe.iso  $ipxe_image_path/cloudboot_$ver.iso
-    _patch_iso $ipxe_bin/ipxe.iso  $ipxe_image_path/cloudboot_$ver.patch.iso
+    _patch_iso $ipxe_bin/ipxe.iso  $ipxe_image_path/cloudboot_$ver.iso
     cp $ipxe_bin/ipxe.dsk  $ipxe_image_path/cloudboot_$ver.dsk
     cp $ipxe_bin/ipxe.lkrn $ipxe_image_path/cloudboot_$ver.lkrn
     cp $ipxe_bin/ipxe.usb  $ipxe_image_path/cloudboot_$ver.usb

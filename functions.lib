@@ -46,34 +46,42 @@ _patch_iso(){
 	input_iso=$1
 	output_iso=$2
 
-	isoloop_dir=`mktemp -dt iso.loop.XXXXXX`
 	isobuild_dir=`mktemp -dt iso.build.XXXXXX`
 
-	mkisofs=`which mkisofs genisoimage 2>/dev/null | head -n1`
-	if [ -z $mkisofs ]
+	_comm_mkisofs=`which mkisofs genisoimage 2>/dev/null | head -n1`
+	if [ -z $_comm_mkisofs ]
 	then
 		echo $0: mkisofs or genisoimage not found, please install or set PATH
 		exit 1
 	fi
 
-	# isohybrid will be used if available
-	isohybrid=`which isohybrid 2>/dev/null`
+	_comm_7z=`which 7z 2>/dev/null | head -n1`
+	if [ -z $_comm_7z ]
+	then
+		echo $0: 7z not found, please install or set PATH
+		exit 1
+	fi
 
-	[ $UID = 0 ] || echo "Switch as super user ..."
-	sudo mount -t auto  -o loop $input_iso $isoloop_dir
-	[ $? = 0 ] || ( echo "mount iso faild ! exit !" ; exit 2)
-	cp $isoloop_dir/* $isobuild_dir
+	# isohybrid will be used if available
+	_comm_isohybrid=`which isohybrid 2>/dev/null`
+
+	# extra files from iso
+ 	$_comm_7z x $input_iso -o$isobuild_dir
+	pushd $isobuild_dir/
+	rename 'y/A-Z/a-z/' *
+	rm -rf  \[boot\]
+	popd	
 	cp -a $cloudboot_root_path/utils $isobuild_dir
 	echo "include isolinux.cfg" > $isobuild_dir/syslinux.cfg
 	echo $ver > $isobuild_dir/Cloudboot-Live-Version
 	chmod -R 755 $isobuild_dir
 
 	# mkiso
-	$mkisofs -quiet -R -r -l -o $output_iso -c boot.cat -b isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table $isobuild_dir
+	$_comm_mkisofs -quiet -R -r -l -o $output_iso -c boot.cat -b isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table $isobuild_dir
 	# hybrid iso file
-	[ -n "$isohybrid" ] && $isohybrid $out >/dev/null
+	[ -n "$_comm_isohybrid" ] && $_comm_isohybrid $output_iso >/dev/null
 
-	sudo umount $isoloop_dir
-	rm -rf $isoloop_dir $isobuild_dir
+	#sudo umount $isoloop_dir
+	rm -rf $isobuild_dir
 }
 
