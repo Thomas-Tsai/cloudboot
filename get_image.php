@@ -1,12 +1,15 @@
 <?php
 require "config.php";
+echo var_dump($_GET);
 global $freeurl, $sfurl, $enable_sourceforge;
-$manual_sf = 0;
-$proj = $_GET['proj'];
-$file = $_GET['file'];
-$manual_sf = $_GET['sf'];
-if (($enable_sourceforge == true) || ($manual_sf == 1)){
+$proj   = $_GET['proj'];
+$file   = $_GET['file'];
+$mirror = $_GET['mirror'];
+
+if (($enable_sourceforge == true) && ($mirror == "SF")){
     $isourl="$sfurl[$proj]$file";
+}elseif($mirror == "NCHC"){
+    $isourl="$freeurl[$proj]$file";
 }else{
     $isourl="$freeurl[$proj]$file";
 }

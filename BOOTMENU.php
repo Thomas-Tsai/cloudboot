@@ -1,7 +1,23 @@
 <?php
 // Get utility functions and set globals
 require "config.php";
+$mirror = $_GET['mirror'];
 header ( "Content-type: text/plain" );
+
+##
+if (($enable_sourceforge == true) && ($mirror == "SF")) {
+    $kernel_url  = "$sfurl[$kernel]$kernel";
+    $freedos_url = "$sfurl[$freedos]$freedos";
+    $memtest_url = "$sfurl[$memtest]$memtest";
+} elseif($mirror == "NCHC") {
+    $kernel_url  = "$freeurl[$kernel]$kernel";
+    $freedos_url = "$freeurl[$freedos]$freedos";
+    $memtest_url = "$freeurl[$memtest]$memtest";
+} else {
+    $kernel_url  = "$freeurl[$kernel]$kernel";
+    $freedos_url = "$freeurl[$freedos]$freedos";
+    $memtest_url = "$freeurl[$memtest]$memtest";
+}
 
 ### print pxe menu, copy from pxelinux.cfg/default ###
 function print_menu_head(){
@@ -54,7 +70,7 @@ function get_iso_from_page($page, $regx){
 }
 
 function print_default_menu_entry(){
-    global $agent_url, $kernel_url, $freeurl, $pattern, $default_proj, $default_arch;
+    global $agent_url, $kernel_url, $freeurl, $pattern, $default_proj, $default_arch, $mirror;
     $page = file_get_contents($freeurl[$default_proj]);
     $page_ok = preg_match("/200/",$http_response_header[0]);
     //echo "$link-$http_response_header[0]\n";
@@ -90,7 +106,7 @@ function print_default_menu_entry(){
     echo "\tMENU LABEL $def_entry\n";
     echo "\tMENU DEFAULT\n";
     echo "\tkernel $kernel_url\n";
-    echo "\tinitrd $agent_url?proj=$default_proj&file=$def_entry\n";
+    echo "\tinitrd $agent_url?proj=$default_proj&file=$def_entry&mirror=$mirror\n";
     echo "\tappend iso raw\n";
     echo "\tTEXT HELP\n";
     echo "\tBooting to $default_proj for $arch\n";
@@ -98,14 +114,13 @@ function print_default_menu_entry(){
 }
 
 ### main ###
-global $kernel_url, $freeurl, $pattern, $menu, $freedos_url, $memtest_url, $default_proj, $default_arch, $enable_netinstall, $enable_sourceforge;
 
 print_menu_head();
 print_default_menu_entry();
 
 ### get download page and convert to pxelinux menu style ###
 foreach ($menu as $proj_dist => $submenu){
-
+    global $mirror;
     echo "\nMENU BEGIN $proj_dist\n\n";
     foreach($submenu as $proj){
 	$page = file_get_contents($freeurl[$proj]);
@@ -123,7 +138,7 @@ foreach ($menu as $proj_dist => $submenu){
 	    echo "label $file\n";
 	    echo "\tMENU LABEL $file\n";
 	    echo "\tkernel $kernel_url\n";
-	    echo "\tinitrd $agent_url?proj=$proj&file=$file\n";
+	    echo "\tinitrd $agent_url?proj=$proj&file=$file&mirror=$mirror\n";
 	    echo "\tappend iso raw\n";
 	    echo "\tTEXT HELP\n";
 	    echo "\tBooting to $proj for $arch\n";
@@ -147,9 +162,12 @@ if ($enable_netinstall) {
 	    }
 	    echo "label $file\n";
 	    echo "\tMENU LABEL $file\n";
-	    if ($enable_sourceforge == true) {
+	    if (($enable_sourceforge == true) || ($mirror == "SF")){
 		echo "\tkernel $sfurl[netinstall]vmlinuz-netinstall-$file\n";
 		echo "\tappend initrd=$sfurl[netinstall]initrd-netinstall-$file.img ramdisk_size=128000\n";
+	    } elseif($mirror == "NCHC") {
+		echo "\tkernel $freeurl[netinstall]vmlinuz-netinstall-$file\n";
+		echo "\tappend initrd=$freeurl[netinstall]initrd-netinstall-$file.img ramdisk_size=128000\n";
 	    } else {
 		echo "\tkernel $freeurl[netinstall]vmlinuz-netinstall-$file\n";
 		echo "\tappend initrd=$freeurl[netinstall]initrd-netinstall-$file.img ramdisk_size=128000\n";

@@ -7,13 +7,13 @@
 ##############################################
 
 ### options
-$enable_sourceforge = false;
+$enable_sourceforge = true;
 $enable_netinstall = false;  # run 'drbl-netinstall -d xxx -i all'
 $enable_custom_rom = true;
 
 ### global variable for kernel url
 $site	    = "140.110.240.48";
-$local_path = "cloudboot-dev";
+$local_path = "cloudboot";
 $local_url  = "http://$site/$local_path";
 $kernel	    = "memdisk";  # kernel link for pxelinux
 $freedos    = "freedos.img";
@@ -40,10 +40,10 @@ $sfurl['drbl-testing']                       = "http://prdownloads.sourceforge.n
 $sfurl['drbl-unstable']                      = "http://prdownloads.sourceforge.net/gparted/";
 $sfurl['gparted-stable']                     = "http://prdownloads.sourceforge.net/gparted/";
 $sfurl['gparted-testing']                    = "http://prdownloads.sourceforge.net/gparted/";
-$sfurl['freedos.img']			     = "http://prdownloads.sourceforge.net/cloudboot/small_img/";
-$sfurl['memtest']			     = "http://prdownloads.sourceforge.net/cloudboot/small_img/";
-$sfurl['memdisk']			     = "http://prdownloads.sourceforge.net/cloudboot/small_img/";
-$sfurl['netinstall']		             = "http://prdownloads.sourceforge.net/cloudboot/netinstall_img/";
+$sfurl['freedos.img']			     = "http://prdownloads.sourceforge.net/cloudboot/";
+$sfurl['memtest']			     = "http://prdownloads.sourceforge.net/cloudboot/";
+$sfurl['memdisk']			     = "http://prdownloads.sourceforge.net/cloudboot/";
+$sfurl['netinstall']		             = "http://prdownloads.sourceforge.net/cloudboot/";
 
 ### global variable for project download link from free
 $freeurl['clonezilla-stable']                  = "http://free.nchc.org.tw/clonezilla-live/stable/";
@@ -71,17 +71,6 @@ $pattern['drbl-unstable']                  = $pattern['drbl-stable'];
 $pattern['gparted-stable']                 = '/<a href.*gparted.*iso.*>(.*)<\/a>/';
 $pattern['gparted-testing']                = $pattern['gparted-stable'];
 $pattern['netinstall']			   = '/<a href.*initrd-netinstall-.*img.*>initrd-netinstall-(.*).img<\/a>/';
-
-##
-if ($enable_sourceforge == true) {
-    $kernel_url  = "$sfurl[$kernel]$kernel";
-    $freedos_url = "$sfurl[$freedos]$freedos";
-    $memtest_url = "$sfurl[$memtest]$memtest";
-} else {
-    $kernel_url  = "$freeurl[$kernel]$kernel";
-    $freedos_url = "$freeurl[$freedos]$freedos";
-    $memtest_url = "$freeurl[$memtest]$memtest";
-}
 
 ### menu layout
 $menu['clonezilla']		= array('clonezilla-stable', 'clonezilla-testing');

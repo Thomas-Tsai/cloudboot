@@ -29,7 +29,7 @@ build_rom_script(){
     local_path=`cat config.php | grep local_path | grep -v http | awk {'print $3'} | sed  s/\"//g | sed s/=//g | sed s/\;//`
     cat <<-IPXE > $rom_script
 #!gpxe
-set filename http://$ip/$local_path/boot.gpxe.php
+set filename http://$ip/$local_path/boot.gpxe.php?mirror=sf
 :ask_network
 echo Welcome to CLOUDBOOT
 echo Current Network status:
@@ -42,12 +42,14 @@ echo b) Getting IP address from DHCP Server
 echo c) Manual config network
 echo d) Entering iPXE Shell
 echo e) Config iPXE all options
+echo f) changing mirror (default sourceforge)
 read answer
 iseq \${answer} a && autoboot ||
 iseq \${answer} b && goto setup_dhcp ||
 iseq \${answer} c && goto setup_ipconfig ||
 iseq \${answer} d && shell ||
 iseq \${answer} e && config ||
+iseq \${answer} f && goto update_mirror || 
 goto ask_network
 
 :setup_dhcp
@@ -84,6 +86,14 @@ iseq \${correct} y && chain \${filename} || goto ask_network
 iseq \${correct} Y && chain \${filename} || goto ask_network
 iseq \${correct} n && goto ask_next ||
 iseq \${correct} N && goto ask_next ||
+
+:update_mirror
+echo a) use sourceforge
+echo b) use NCHC (Taiwan)
+read mirror
+iseq \${mirror} a && set filename http://$ip/$local_path/boot.gpxe.php?mirror=sf   || goto ask_network
+iseq \${mirror} b && set filename http://$ip/$local_path/boot.gpxe.php?mirror=nchc || goto ask_network
+goto ask_network
 
 IPXE
 }

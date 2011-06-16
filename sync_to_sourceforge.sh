@@ -9,8 +9,8 @@ sf_file_site="frs.sourceforge.net"
 sf_file_path="/home/frs/project/c/cl/cloudboot/"
 project="cloudboot"
 user="thomas_tsai"
-files_for_web="boot.gpxe.php BOOTMENU.php config.php get_image.php guide.htm pxe readme.txt VERSION test2.php phpinfo.php"
-files_for_frs="netinstall_img ipxe_image small_img"
+files_for_web="boot.gpxe.php BOOTMENU.php config.php get_image.php guide.htm pxe readme.txt VERSION"
+files_for_frs="netinstall_img ipxe_image small_img pxe"
 
 rsync -avrl --delete -e ssh $files_for_frs $user,$project@$sf_file_site:$sf_file_path/
 rsync -avrl --delete -e ssh $files_for_web $user@$sf_web_site:$sf_web_path/
