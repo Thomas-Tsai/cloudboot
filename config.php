@@ -8,7 +8,7 @@
 
 ### options
 $enable_sourceforge = true;
-$enable_netinstall = false;  # run 'drbl-netinstall -d xxx -i all'
+$enable_netinstall = true;  # run 'drbl-netinstall -d xxx -i all'
 $enable_custom_rom = true;
 
 ### global variable for kernel url

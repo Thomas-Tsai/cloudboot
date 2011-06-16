@@ -87,12 +87,24 @@ iseq \${correct} Y && chain \${filename} || goto ask_network
 iseq \${correct} n && goto ask_next ||
 iseq \${correct} N && goto ask_next ||
 
+:set_mirror_sf
+clear filename
+set filename http://$ip/$local_path/boot.gpxe.php?mirror=SF
+echo \${filename}
+goto ask_network
+
+:set_mirror_nchc
+clear filename
+set filename http://$ip/$local_path/boot.gpxe.php?mirror=NCHC
+echo \${filename}
+goto ask_network
+
 :update_mirror
-echo a) use sourceforge
+echo a) use SourceForge
 echo b) use NCHC (Taiwan)
 read mirror
-iseq \${mirror} a && set filename http://$ip/$local_path/boot.gpxe.php?mirror=sf   || goto ask_network
-iseq \${mirror} b && set filename http://$ip/$local_path/boot.gpxe.php?mirror=nchc || goto ask_network
+iseq \${mirror} a && goto set_mirror_sf ||
+iseq \${mirror} b && goto set_mirror_nchc ||
 goto ask_network
 
 IPXE

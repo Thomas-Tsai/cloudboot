@@ -3,6 +3,7 @@ require "config.php";
 global $boot_menu_path, $local_url, $pxelinux_file;
 header ( "Content-type: text/plain" );
 $mirror = $_GET["mirror"];
+$mirror = strtoupper ($mirror); 
 echo <<< GPXE
 #!gpxe
 set 209:string $boot_menu_path?mirror=$mirror
