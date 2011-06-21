@@ -3,7 +3,7 @@
 
 
 # Load Tux2live setting and functions
-cloudboot_root_path=$(cd $(dirname .) ;pwd)
+cloudboot_root_path=$(cd $(dirname $0) ;pwd)
 
 # Load global configuration
 [ -f "$cloudboot_root_path/conf/cloudboot.conf" ] &&  . $cloudboot_root_path/conf/cloudboot.conf
