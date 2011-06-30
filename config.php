@@ -12,7 +12,7 @@ $enable_netinstall = true;  # run 'drbl-netinstall -d xxx -i all'
 $enable_custom_rom = true;
 
 ### global variable for kernel url
-$site	    = "140.110.240.48";
+$site	    = "free.nchc.org.tw";
 $local_path = "cloudboot";
 $local_url  = "http://$site/$local_path";
 $kernel	    = "memdisk";  # kernel link for pxelinux

@@ -1,6 +1,6 @@
 <?php
 require "config.php";
-echo var_dump($_GET);
+#echo var_dump($_GET);
 global $freeurl, $sfurl, $enable_sourceforge;
 $proj   = $_GET['proj'];
 $file   = $_GET['file'];
@@ -13,6 +13,5 @@ if (($enable_sourceforge == true) && ($mirror == "SF")){
 }else{
     $isourl="$freeurl[$proj]$file";
 }
-
 header( "Location: $isourl");
 ?>

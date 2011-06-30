@@ -59,7 +59,7 @@ _patch_iso(){
 	if [ -z $_comm_7z ]
 	then
 		echo $0: 7z not found, please install or set PATH
-		exit 1
+		exit 1;
 	fi
 
 	# isohybrid will be used if available

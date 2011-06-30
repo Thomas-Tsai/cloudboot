@@ -114,6 +114,7 @@ copy_rom() {
     [ ! -d $ipxe_image_path ] && mkdir $ipxe_image_path
     [ ! -d $cloudboot_root_path/$ipxe_path ] && git clone git://git.ipxe.org/ipxe.git $ipxe_path
     [ -f $rom_script ] && make -C $ipxe_src EMBEDDED_IMAGE=$rom_script
+    [ ! $? = "0" ] && echo "make failed , please fix it then do it again!!" && exit 1;
     rm $ipxe_bin/ipxe*.tmp
     rm $ipxe_bin/ipxe*.map
     #ipxe.dsk  ipxe.iso  ipxe.lkrn  ipxe.usb
