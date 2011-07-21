@@ -1,15 +1,3 @@
-### TODO #######################################
-# 1. SSL support?
-# 2. change background.png
-# 3. phram bug for bigger 512 memory in memdisk
-################################################
-
-##important######################################
-# please set rewrite rule to web service like:	#
-# BOOTMENU  => BOOTMENU.php			#
-# boot.gpxe => boot.gpxe.php			#
-#################################################
-
 
 1. installation
 ## setup lighttp and php5-cgi
@@ -27,31 +15,21 @@ display_errors = On
 
 ### config web server
 configure lighttpd.conf
-$ ghttpd-enable-mod cgi
-#set rewrite rule
-server.modules = (
-...
-        "mod_rewrite",
-)
-.....
-url.rewrite-once = (
-    "drbloncloud/BOOTMENU"  => "$0.php",
-    "drbloncloud/boot.gpxe"  => "$0.php" 
-)
+$ lighttpd-enable-mod cgi
+
+3. prepare web applications
+## source code
+#get cloudboot source code from git
+cd /var/www
+git clone someone@free.nchc.org.tw:$port/home/gitpool/cloudboot/
+
 
 2. config
 edit config.php
 
-3. prepare web applications
-## source code
-get cloudboot source code from git
-git clone someone@free.nchc.org.tw:$port/home/gitpool/cloudboot/
-
 ## update ipxe
-update rom-image.ipxe
-chain http://yourserver/boot.gpxe
-run script build-image and don't forget install build-essential and genisoimage
-bash build-imag
+run script build-image and don't forget install build-essential and genisoimage and syslinux and p7zip-full
+bash build-image
 
 ## Netinstall
 run script build-netinstall to get all netinstall image and don't forget install drbl

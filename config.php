@@ -1,49 +1,44 @@
 <?php
+require_once "functions.php";
+$conf = read_option();
+### global variable for menu script
+$site_url	= $conf["site_url"];
+$local_path	= $conf["local_path"];
+$boot_menu_path	= $conf["boot_menu"];
+$pxelinux_file	= $conf["pxelinux"];
+$pxe_vesamenu	= $conf["pxe_vesamenu"];
+$pxe_timeout	= $conf["pxe_timeout"];
+$pxe_prompt	= $conf["pxe_prompt"];
+$pxe_noescape	= $conf["pxe_noescape"];
+$pxe_background	= $conf["pxe_background"];
+$pxe_menu_title	= $conf["pxe_menu_title"];
+$default_proj	= "$conf[default_proj]-$conf[default_version]";
+$default_arch	= $conf["default_arch"];
+$enable_sourceforge = $conf["enable_sourceforge"];
+$default_mirror = $conf["default_repository"];
 
-##important###################################
-# please set rewrite rule to web service like:
-# BOOTMENU  => BOOTMENU.php
-# boot.gpxe => boot.gpxe.php
-##############################################
-
-### options
-$enable_sourceforge = true;
-$enable_netinstall = true;  # run 'drbl-netinstall -d xxx -i all'
-$enable_custom_rom = true;
-
-### global variable for kernel url
-$site	    = "free.nchc.org.tw";
-$local_path = "cloudboot";
-$local_url  = "http://$site/$local_path";
-$kernel	    = "memdisk";  # kernel link for pxelinux
-$freedos    = "freedos.img";
-$memtest    = "memtest";
-$boot_menu_path = "BOOTMENU.php"; # BOOTMENU.php rewrite to BOOTMENU, rewrite needed
-$pxelinux_file = "pxe/pxelinux.0";
+$local_url   = "http://$site_url/$local_path";
+$kernel	     = "memdisk";  # kernel link for pxelinux
+$freedos     = "freedos.img";
+$memtest     = "memtest";
 $agent_url   = "$local_url/get_image.php";
 
-### global variable for pxe menu
-$pxe_vesamenu	= "pxe/vesamenu.c32";
-$pxe_timeout	= "50";
-$pxe_prompt	= "0";
-$pxe_noescape	="0";
-$pxe_background = "pxe/drblwp.png";
-$pxe_menu_title ="MENU TITLE free.nchc.org.tw";
 
 ### global variable for project download link from sourceforge
-$sfurl['clonezilla-stable']                  = "http://prdownloads.sourceforge.net/clonezilla/";
-$sfurl['clonezilla-testing']                 = "http://prdownloads.sourceforge.net/clonezilla/";
-$sfurl['clonezilla-alternative-stable']      = "http://prdownloads.sourceforge.net/clonezilla/";
-$sfurl['clonezilla-alternative-testing']     = "http://prdownloads.sourceforge.net/clonezilla/";
-$sfurl['drbl-stable']                        = "http://prdownloads.sourceforge.net/drbl/";
-$sfurl['drbl-testing']                       = "http://prdownloads.sourceforge.net/drbl/";
-$sfurl['drbl-unstable']                      = "http://prdownloads.sourceforge.net/gparted/";
-$sfurl['gparted-stable']                     = "http://prdownloads.sourceforge.net/gparted/";
-$sfurl['gparted-testing']                    = "http://prdownloads.sourceforge.net/gparted/";
-$sfurl['freedos.img']			     = "http://prdownloads.sourceforge.net/cloudboot/";
-$sfurl['memtest']			     = "http://prdownloads.sourceforge.net/cloudboot/";
-$sfurl['memdisk']			     = "http://prdownloads.sourceforge.net/cloudboot/";
-$sfurl['netinstall']		             = "http://prdownloads.sourceforge.net/cloudboot/";
+$sfurl['clonezilla-stable']                    = "http://prdownloads.sourceforge.net/clonezilla/";
+$sfurl['clonezilla-testing']                   = "http://prdownloads.sourceforge.net/clonezilla/";
+$sfurl['clonezilla-alternative-stable']        = "http://prdownloads.sourceforge.net/clonezilla/";
+$sfurl['clonezilla-alternative-testing']       = "http://prdownloads.sourceforge.net/clonezilla/";
+$sfurl['drbl-stable']                          = "http://prdownloads.sourceforge.net/drbl/";
+$sfurl['drbl-testing']                         = "http://prdownloads.sourceforge.net/drbl/";
+$sfurl['drbl-unstable']                        = "http://prdownloads.sourceforge.net/gparted/";
+$sfurl['gparted-stable']                       = "http://prdownloads.sourceforge.net/gparted/";
+$sfurl['gparted-testing']                      = "http://prdownloads.sourceforge.net/gparted/";
+$sfurl['freedos.img']			       = "http://prdownloads.sourceforge.net/cloudboot/";
+$sfurl['memtest']			       = "http://prdownloads.sourceforge.net/cloudboot/";
+$sfurl['memdisk']			       = "http://prdownloads.sourceforge.net/cloudboot/";
+$sfurl['netinstall']		               = "http://prdownloads.sourceforge.net/cloudboot/";
+$sfurl['kernel']		               = "http://prdownloads.sourceforge.net/cloudboot/";
 
 ### global variable for project download link from free
 $freeurl['clonezilla-stable']                  = "http://free.nchc.org.tw/clonezilla-live/stable/";
@@ -55,10 +50,27 @@ $freeurl['drbl-testing']                       = "http://free.nchc.org.tw/drbl-l
 $freeurl['drbl-unstable']                      = "http://free.nchc.org.tw/drbl-live/unstable/";
 $freeurl['gparted-stable']                     = "http://free.nchc.org.tw/gparted-live/stable/";
 $freeurl['gparted-testing']                    = "http://free.nchc.org.tw/gparted-live/testing/";
-$freeurl['freedos.img']		               = "$local_url/small_img/";
-$freeurl['memtest']		               = "$local_url/small_img/";
-$freeurl['memdisk']		               = "$local_url/small_img/";
-$freeurl['netinstall']		               = "$local_url/netinstall_img/";
+$freeurl['freedos.img']		               = "http://free.nchc.org.tw/cloudboot/small_img/";
+$freeurl['memtest']		               = "http://free.nchc.org.tw/cloudboot/small_img/";
+$freeurl['memdisk']		               = "http://free.nchc.org.tw/cloudboot/small_img/";
+$freeurl['netinstall']		               = "http://free.nchc.org.tw/cloudboot/netinstall_img/";
+$freeurl['kernel']		               = "http://free.nchc.org.tw/cloudboot/kernel_img/";
+
+### global variable for project download link from local mirror (you need mirror some files from sourceforge)
+$localurl['clonezilla-stable']                 = "$local_url/local_img/clonezilla-live/stable/";
+$localurl['clonezilla-testing']                = "$local_url/local_img/clonezilla-live/testing/";
+$localurl['clonezilla-alternative-stable']     = "$local_url/local_img/clonezilla-live/alternative/stable/";
+$localurl['clonezilla-alternative-testing']    = "$local_url/local_img/clonezilla-live/alternative/testing/";
+$localurl['drbl-stable']                       = "$local_url/local_img/drbl-live/stable/";
+$localurl['drbl-testing']                      = "$local_url/local_img/drbl-live/testing/";
+$localurl['drbl-unstable']                     = "$local_url/local_img/drbl-live/unstable/";
+$localurl['gparted-stable']                    = "$local_url/local_img/gparted-live/stable/";
+$localurl['gparted-testing']                   = "$local_url/local_img/gparted-live/testing/";
+$localurl['freedos.img']		       = "$local_url/small_img/";
+$localurl['memtest']		               = "$local_url/small_img/";
+$localurl['memdisk']		               = "$local_url/small_img/";
+$localurl['netinstall']		               = "$local_url/netinstall_img/";
+$localurl['kernel']			       = "$local_url/kernel_img/";
 
 ### global variable for project pattern which defined regular expression for iso link
 $pattern['clonezilla-stable']              = '/<a href.*clonezilla.*iso.*>(.*)<\/a>/';
@@ -77,10 +89,5 @@ $menu['clonezilla']		= array('clonezilla-stable', 'clonezilla-testing');
 $menu['clonezilla-alternative'] = array('clonezilla-alternative-stable', 'clonezilla-alternative-testing');
 $menu['drbl']			= array('drbl-stable', 'drbl-testing', 'drbl-unstable');
 $menu['gparted']		= array('gparted-stable', 'gparted-testing');
-$default_proj = 'drbl-stable';
-$default_arch = 'i686';
 
-### debug and log 
-$enable_debug	= true;
-$enable_log	= true;
 ?>

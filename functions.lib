@@ -13,6 +13,7 @@
 ####################################################
 
 _LOAD_CLOUDBOOT_FUNCTIONS=y
+_DEFAULT_CONF_PATH="conf/cloudboot.conf"
 
 # setup some parameters for color output. The variables should be already 
 # defined in the /etc/init.d/functions in RH-like distribution 
@@ -85,3 +86,14 @@ _patch_iso(){
 	rm -rf $isobuild_dir
 }
 
+get_conf(){
+    if [ "x$2" == "x" ];then
+	conf_file=$_DEFAULT_CONF_PATH
+	conf_param=$1
+    else
+	conf_file=$1
+	conf_param=$2
+    fi
+    value=$(sed -n 's/.*'$conf_param'\s*=\s*\(.*\)/\1/p' < $conf_file)
+    echo $value
+}

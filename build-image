@@ -5,8 +5,10 @@
 # Load Tux2live setting and functions
 cloudboot_root_path=$(cd $(dirname $0) ;pwd)
 
-# Load global configuration
-[ -f "$cloudboot_root_path/conf/cloudboot.conf" ] &&  . $cloudboot_root_path/conf/cloudboot.conf
+# Load global configuration 
+# It's ini file, not shellconf, replace as
+# site_url=`get_conf conf/cloudboot.conf site_url`
+#[ -f "$cloudboot_root_path/conf/cloudboot.conf" ] &&  . $cloudboot_root_path/conf/cloudboot.conf
 
 # Load sub function for global usage
 [ -f "$cloudboot_root_path/functions.lib" ] &&  . $cloudboot_root_path/functions.lib
@@ -15,21 +17,22 @@ cloudboot_root_path=$(cd $(dirname $0) ;pwd)
 # Main
 #######
 
-keep_ipxe_make_dir="yes"
 rom_script="$cloudboot_root_path/rom-image.ipxe"
 ipxe_image_path="$cloudboot_root_path/ipxe_image"
 ipxe_path="ipxe"
 ipxe_src="$cloudboot_root_path/$ipxe_path/src/"
 ipxe_bin="$cloudboot_root_path/$ipxe_path/src/bin"
 ver=`cat VERSION`
+conf="conf/cloudboot.conf"
 
 build_rom_script(){
 
-    ip=`cat config.php |grep site | grep -v url|awk {'print $3'} | sed  s/\"//g | sed s/=//g | sed s/\;//`
-    local_path=`cat config.php | grep local_path | grep -v http | awk {'print $3'} | sed  s/\"//g | sed s/=//g | sed s/\;//`
+    ip=`get_conf $conf site_url`
+    local_path=`get_conf $conf local_path`
+    default_repository=`get_conf default_repository`
     cat <<-IPXE > $rom_script
 #!gpxe
-set filename http://$ip/$local_path/boot.gpxe.php?mirror=sf
+set filename http://$ip/$local_path/boot.gpxe.php?mirror=$default_repository
 :ask_network
 echo Welcome to CLOUDBOOT
 echo Current Network status:
@@ -111,6 +114,7 @@ IPXE
 }
 
 copy_rom() {
+    keep_ipxe_make_dir=`get_conf keep_ipxe_build_env`
     [ ! -d $ipxe_image_path ] && mkdir $ipxe_image_path
     [ ! -d $cloudboot_root_path/$ipxe_path ] && git clone git://git.ipxe.org/ipxe.git $ipxe_path
     [ -f $rom_script ] && make -C $ipxe_src EMBEDDED_IMAGE=$rom_script
@@ -127,7 +131,7 @@ copy_rom() {
 }
 
 enable_custom_rom_page(){
-    enable_custom_rom=`grep enable_custom_rom config.php  | sed -e 's/$enable_custom_rom//' | sed -e 's/=//g' | sed -e 's/ //g' | sed -e 's/;//'`
+    enable_custom_rom=`get_conf $conf enable_custom_rom`
     if [ $enable_custom_rom == 'true' -o $enable_custom_rom == 'TRUE' ]; then
         make -C $ipxe_src bin/NIC
     fi
