@@ -23,16 +23,15 @@ ipxe_path="ipxe"
 ipxe_src="$cloudboot_root_path/$ipxe_path/src/"
 ipxe_bin="$cloudboot_root_path/$ipxe_path/src/bin"
 ver=`cat VERSION`
-conf="conf/cloudboot.conf"
 
 build_rom_script(){
 
-    ip=`get_conf $conf site_url`
-    local_path=`get_conf $conf local_path`
+    ip=`get_conf site_url`
+    local_path=`get_conf local_path`
     default_repository=`get_conf default_repository`
     cat <<-IPXE > $rom_script
 #!gpxe
-set filename http://$ip/$local_path/boot.gpxe.php?mirror=$default_repository
+set filename http://$ip/$local_path/boot.gpxe.php
 :ask_network
 echo Welcome to CLOUDBOOT
 echo Current Network status:
@@ -41,18 +40,16 @@ route
 echo
 prompt --timeout 10000 Press anykey for cloudboot iPXE menu or autoboot after 10 secs && || autoboot
 echo a) AUTO config network (Default)
-echo b) Getting IP address from DHCP Server
-echo c) Manual config network
-echo d) Entering iPXE Shell
-echo e) Config iPXE all options
-echo f) changing mirror (default sourceforge)
+echo b) Manual config network
+echo c) Config iPXE all options
+echo d) Getting IP address from DHCP Server
+echo e) Entering iPXE Shell
 read answer
 iseq \${answer} a && autoboot ||
-iseq \${answer} b && goto setup_dhcp ||
-iseq \${answer} c && goto setup_ipconfig ||
-iseq \${answer} d && shell ||
-iseq \${answer} e && config ||
-iseq \${answer} f && goto update_mirror || 
+iseq \${answer} b && goto setup_ipconfig ||
+iseq \${answer} c && config ||
+iseq \${answer} d && goto setup_dhcp ||
+iseq \${answer} e && shell ||
 goto ask_network
 
 :setup_dhcp
@@ -90,24 +87,6 @@ iseq \${correct} Y && chain \${filename} || goto ask_network
 iseq \${correct} n && goto ask_next ||
 iseq \${correct} N && goto ask_next ||
 
-:set_mirror_sf
-clear filename
-set filename http://$ip/$local_path/boot.gpxe.php?mirror=SF
-echo \${filename}
-goto ask_network
-
-:set_mirror_nchc
-clear filename
-set filename http://$ip/$local_path/boot.gpxe.php?mirror=NCHC
-echo \${filename}
-goto ask_network
-
-:update_mirror
-echo a) use SourceForge
-echo b) use NCHC (Taiwan)
-read mirror
-iseq \${mirror} a && goto set_mirror_sf ||
-iseq \${mirror} b && goto set_mirror_nchc ||
 goto ask_network
 
 IPXE
@@ -131,7 +110,7 @@ copy_rom() {
 }
 
 enable_custom_rom_page(){
-    enable_custom_rom=`get_conf $conf enable_custom_rom`
+    enable_custom_rom=`get_conf enable_custom_rom`
     if [ $enable_custom_rom == 'true' -o $enable_custom_rom == 'TRUE' ]; then
         make -C $ipxe_src bin/NIC
     fi

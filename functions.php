@@ -15,7 +15,6 @@ function print_menu_head(){
     global $pxe_menu_title;
 
     echo <<< END
-#default $pxe_vesamenu
 timeout $pxe_timeout
 prompt $pxe_prompt
 noescape $pxe_noescape

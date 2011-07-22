@@ -89,5 +89,5 @@ $menu['clonezilla']		= array('clonezilla-stable', 'clonezilla-testing');
 $menu['clonezilla-alternative'] = array('clonezilla-alternative-stable', 'clonezilla-alternative-testing');
 $menu['drbl']			= array('drbl-stable', 'drbl-testing', 'drbl-unstable');
 $menu['gparted']		= array('gparted-stable', 'gparted-testing');
-
+$menu['other']			= array('other');
 ?>
