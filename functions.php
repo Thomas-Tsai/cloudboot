@@ -1,7 +1,7 @@
 <?php
 ### read conf/cloudboot.conffunction 
 function read_option(){
-   $conf = parse_ini_file("conf/cloudboot.conf");
+   $conf = parse_ini_file( "conf/cloudboot.conf" );
    return $conf;
 }
 
@@ -96,5 +96,59 @@ function print_default_menu_entry(){
     echo "\tBooting to $default_proj for $arch\n";
     echo "\tENDTEXT\n";
 }
+
+function label ( $name ) {
+    echo "label $name\n";
+}
+
+function menu ( $name, $desc ) {
+    echo "menu label $name $desc\n";
+}
+
+function kernel ( $kernel ) {
+    echo "kernel $kernel\n";
+}
+
+function append ( $append ) {
+    echo "append $append\n";
+}
+
+function KernelArchMenu ( $bootcfg, $repository ) {
+    foreach ( $arch["$bootcfg"] ) {
+	$kernel_uri	 = "$url[$repository]/$base_path[$repository]/$vmlinuz_file";
+	$initrd_uri	 = "$url[$repository]/$base_path[$repository]/$initrd_file";
+	$ipxe_net_config = "$ipxe_net";
+	$filesystem	 = "$url[$repository]/$base_path[$repository]/$filesystem";
+	$append_str	 = "initrd=$initrd_uri $filesystem ip=$ipxe_net_config $normal_config[$bootcfg]";
+	label( $bootcfg );
+	menu( $bootcfgi, $arch );
+	kernel( $kernel_uri );
+	append( $append_str );
+    }
+}
+
+function ISOArchMenu ( $bootcfg, $repository ) {
+    foreach ( $arch["$bootcfg"] ) {
+	$kernel_uri = $memdisk_uri["$arch"];
+	$append_str = "initrd=$initrd[$arch] iso raw";
+	label( $bootcfg );
+	menu( $bootcfg, $arch );
+	kernel( $kernel_uri );
+	append( $append_str );
+    }
+}
+function KernelCloudMenu ( $bootcfg ) {
+    foreach ( $repository ) {
+	echo "MENU BEGIN $bootcfg CloudKernel from $repository\n";
+	KernelArchMenu ( $bootcfg, $repository);
+	echo "MENUEND\n";
+    }
+}
+
+function ISOCloudMenu ( $bootcfg ) {
+    foreach ( $repository ) {
+	ISOArchMenu ( $bootcfg, $repository);
+    }
+}    
 
 ?>

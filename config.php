@@ -2,8 +2,12 @@
 require_once "functions.php";
 $conf = read_option();
 ### global variable for menu script
-$site_url	= $conf["site_url"];
+$local_url	= $conf["local_url"];
 $local_path	= $conf["local_path"];
+$nchc_url	= $conf["nchc_url"];
+$nchc_path	= $conf["nchc_path"];
+$sf_url		= $conf["sf_url"];
+$sf_path	= $conf["sf_path"];
 $boot_menu_path	= $conf["boot_menu"];
 $pxelinux_file	= $conf["pxelinux"];
 $pxe_vesamenu	= $conf["pxe_vesamenu"];
@@ -14,14 +18,17 @@ $pxe_background	= $conf["pxe_background"];
 $pxe_menu_title	= $conf["pxe_menu_title"];
 $default_proj	= "$conf[default_proj]-$conf[default_version]";
 $default_arch	= $conf["default_arch"];
-$enable_sourceforge = $conf["enable_sourceforge"];
+$enable_sf	= $conf["enable_sourceforge"];
 $default_mirror = $conf["default_repository"];
 
-$local_url   = "http://$site_url/$local_path";
-$kernel	     = "memdisk";  # kernel link for pxelinux
-$freedos     = "freedos.img";
-$memtest     = "memtest";
-$agent_url   = "$local_url/get_image.php";
+$local_uri	= "http://$local_url/$local_path";
+$nchc_uri	= "http://$nchc_url/$nchc_path"
+$sf_uri		= "http://$sf_url/$sf_path"
+
+$memdisk	= "memdisk";
+$freedos	= "freedos.img";
+$memtest	= "memtest";
+$agent_url	= "$local_url/get_image.php";
 
 
 ### global variable for project download link from sourceforge
@@ -90,4 +97,5 @@ $menu['clonezilla-alternative'] = array('clonezilla-alternative-stable', 'clonez
 $menu['drbl']			= array('drbl-stable', 'drbl-testing', 'drbl-unstable');
 $menu['gparted']		= array('gparted-stable', 'gparted-testing');
 $menu['other']			= array('other');
+$all_menu = array_merge( $menu['clonezilla'], $menu['clonezilla-alternative'], $menu['drbl'], $menu['gparted'], $menu['other']);
 ?>

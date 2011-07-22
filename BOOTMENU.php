@@ -6,73 +6,28 @@ require_once "functions.php";
 $bootcfg = ( isset( $_GET['boot'] ) ) ? $_GET['boot'] : "selectmode";
 header ( "Content-type: text/plain" );
 
-if ($bootcfg == "selectmode"){
-    echo "UI pxe/vesamenu.c32\n\n";
+## reference:http://web.archiveorange.com/archive/v/mwjwmJ0CIqkvn1V88yus
+if ( $bootcfg == "selectmode" ) {
+    echo "UI $pxe_vesamenu\n\n";
 
-    foreach ($menu as $proj_dist => $submenu){
-	foreach($submenu as $proj){
+    foreach ( $menu as $proj_dist => $submenu ) {
+	foreach ( $submenu as $proj ) {
 	    $proj_menu = "$proj_dist-$proj";
 	    echo "LABEL $proj_menu Cloud\n";
 	    echo "COM32 $pxe_vesamenu\n";
-	    echo "APPEND http://cloudboot.nchc.org.tw/cloudboot/BOOTMENU.php?boot=$proj_menu\n";
+	    echo "APPEND $site_url/$local_path/$boot_menu?boot=$proj_menu\n";
 	}
     }
     exit;
 } 
 
-if ( $bootcfg != "" ){
-        
+if ( in_array ( ["$bootcfg"], $all_menu ) ) {
+    ScanISO( $bootcfg );
+    ScanKernel( $bootcfg );
+    KernelCloudMenu( $bootcfg );
+    ISOCloudMenu( $bootcfg );
 }
 
-#elseif ( $bootcfg == "drbl-stable"){
-#    echo "MENU BEGIN CloudKernel from Local\n";
-#    echo "	label drbl-live-stable-486 from local
-#    echo "	MENU LABEL drbl-live-stable-486
-#    echo "	kernel http://sars-048.nchc.org.tw/cloudboot/local_image/drbl-live/stable/drbl-live-xfce-1.0.5-6-i486/live/vmlinuz\n";
-#    echo "	append initrd=http://sars-048.nchc.org.tw/cloudboot/local_image/drbl-live/stable/drbl-live-xfce-1.0.5-6-i486/live/initrd.img boot=live config nomodeset noprompt vga=785 nosplash ip="eth0:140.110.240.46:255.255.255.0:140.110.240.254" fetch=http://sars-048.nchc.org.tw/cloudboot/local_image/drbl-live/stable/drbl-live-xfce-1.0.5-6-i486/live/filesystem.squashfs\n";
-#    echo "MENUEND\n";
-#    echo "MENU BEGIN CloudKernel from NCHC Taiwan\n";
-#    echo "MENUEND\n";
-#    echo "MENU BEGIN CloudKernel from SourceForge\n";
-#    echo "MENUEND\n";
-#    echo "MENU BEGIN FULL ISO from Local\n";
-#    echo "MENUEND\n";
-#    echo "MENU BEGIN FULL ISO from NCHC Taiwan\n";
-#    echo "MENUEND\n";
-#    echo "MENU BEGIN FULL ISO from SourceForge\n";
-#    echo "MENUEND\n";
-#} elseif ( $bootcfg == "drbl-testing"){
-#} elseif ( $bootcfg == "drbl-unstable"){
-#} elseif ( $bootcfg == "clonezilla-stable"){
-#} elseif ( $bootcfg == "clonezilla-testing"){
-#} elseif ( $bootcfg == "clonezilla-alternative-stable"){
-#} elseif ( $bootcfg == "clonezilla-alternativ-testing"){
-#} elseif ( $bootcfg == "gparted-stable"){
-#} elseif ( $bootcfg == "gparted-testing"){
-#} else {
-#    echo "label freedos\n";
-#    echo "    MENU LABEL freedos\n";
-#    echo "    kernel $kernel_url\n";
-#    echo "    initrd $freedos_url\n";
-#    echo "\n";
-#    echo "label memtest\n";
-#    echo "    MENU LABEL memtest\n";
-#    echo "    kernel $memtest_url\n";
-#}
-#echo <<< KERNELMENU
-#MENU BEGIN DRBL
-#    MENU BEGIN stable
-#        MENU BEGIN 486
-#            label drbl-live-stable-486
-#            MENU LABEL drbl-live-stable-486
-#            kernel http://sars-048.nchc.org.tw/cloudboot/local_image/drbl-live/stable/drbl-live-xfce-1.0.5-6-i486/live/vmlinuz
-#
-#            append initrd=http://sars-048.nchc.org.tw/cloudboot/local_image/drbl-live/stable/drbl-live-xfce-1.0.5-6-i486/live/initrd.img boot=live config nomodeset noprompt vga=785 nosplash ip="eth0:140.110.240.46:255.255.255.0:140.110.240.254" fetch=http://sars-048.nchc.org.tw/cloudboot/local_image/drbl-live/stable/drbl-live-xfce-1.0.5-6-i486/live/filesystem.squashfs
-#        MENUEND
-#    MENUEND
-#MENUEND
-#KERNELMENU;
-#} elseif ( $bootcfg == "ISO"){
 #
 #print_menu_head();
 ###
