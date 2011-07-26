@@ -1,8 +1,29 @@
 <?php
 ### read conf/cloudboot.conffunction 
-function read_option(){
+function read_option () {
    $conf = parse_ini_file( "conf/cloudboot.conf" );
    return $conf;
+}
+
+function repo_info ( $supported_repo ) {
+    $conf = parse_ini_file( "conf/cloudboot.conf" );
+    foreach ( $supported_repo as $name ) {
+	eval( "\$urlp = \"repo_$name\".\"_url\";" );
+	eval( "\$pathp = \"repo_$name\".\"_path\";" );
+	eval( "\$pathisop = \"repo_$name\".\"_path_iso\";" );
+	eval( "\$pathkernelp = \"repo_$name\".\"_path_kernel\";" );
+
+	$url	    = $conf[$urlp];
+	$path	    = $conf[$pathp];
+	$pathiso    = $conf[$pathisop];
+	$pathkernel = $conf[$pathkernelp];
+
+	$repo[$name]["url"]	= $url;
+	$repo[$name]["path"]	= $path;
+	$repo[$name]["iso"]	= $pathiso;
+	$repo[$name]["kernel"]  = $pathkernel;
+    }
+    return $repo;
 }
 
 ### print pxe menu, copy from pxelinux.cfg/default ###
@@ -97,6 +118,51 @@ function print_default_menu_entry(){
     echo "\tENDTEXT\n";
 }
 
+function mapurl ( $proj, $type, $file, $mirror, $rt ) {
+    global $supported_repo, $repo;
+
+    $fileurl="http://";
+    if ( in_array ( $mirror, $supported_repo ) )
+    {
+	if ( $type == "iso" ) {
+	    $url = $$mirror;
+	    $fileurl = $url[$proj].$file;
+	} else {
+	    $fileurl = $fileurl.$repo[$mirror]["url"].'/'.$repo[$mirror]["path"].'/'.$repo[$mirror][$type].'/'.$file;
+	}
+    }
+    if ( $rt == 1 ) {
+	return $fileurl;
+    } else {
+	header( "Location: $fileurl");
+    }
+}
+
+function ScanISO ( $bootcfg ) {
+    global $nchc, $pattern, $prefix_name;
+    $page = file_get_contents ( $nchc[$bootcfg] );
+    $page_ok = preg_match ( "/200/", $http_response_header[0] );
+    $prefix_name[$bootcfg] = array();
+    if ( $page_ok ) {
+	$iso = get_iso_from_page ( $page, $pattern[$bootcfg] );
+	$prefix = preg_replace ("/.iso/", "", $iso);
+	foreach ( $prefix as $name ) {
+	    array_push ($prefix_name[$bootcfg], $name);
+	}
+    }
+    return $iso;
+
+}
+
+function ScanKernel ( $bootcfg ) {
+    global $prefix_name;
+    if ( sizeof ( $prefix_name ) == 0 ) {
+    	$iso = ScanISO ( $bootcfg );
+    }
+    return $prefix_name[$bootcfg];
+
+}
+
 function label ( $name ) {
     echo "label $name\n";
 }
@@ -114,40 +180,51 @@ function append ( $append ) {
 }
 
 function KernelArchMenu ( $bootcfg, $repository ) {
-    foreach ( $arch["$bootcfg"] ) {
-	$kernel_uri	 = "$url[$repository]/$base_path[$repository]/$vmlinuz_file";
-	$initrd_uri	 = "$url[$repository]/$base_path[$repository]/$initrd_file";
-	$ipxe_net_config = "$ipxe_net";
-	$filesystem	 = "$url[$repository]/$base_path[$repository]/$filesystem";
-	$append_str	 = "initrd=$initrd_uri $filesystem ip=$ipxe_net_config $normal_config[$bootcfg]";
+    global $kernel_param, $agent_url;
+    $kernel_prefix_name = ScanKernel( $bootcfg );
+    foreach ( $kernel_prefix_name as $name) {
+	$base_path	 = "http://$agent_url?mirror=$repository&type=kernel&proj=$bootcfg";
+	$kernel		 = "$base_path&file=$name.vmlinuz";
+	$initrd		 = "$base_path&file=$name.initrd.img";
+	$filesystem	 = mapurl( $bootcfg, "kernel", $name, $repository, "1" ).".filesystem.squashfs";
+	$ipxe_net_config = $ipxe_net;
+	$append		 = "initrd=$initrd fetch=$filesystem ip=$ipxe_net_config $kernel_param[$bootcfg] toram";
 	label( $bootcfg );
-	menu( $bootcfgi, $arch );
-	kernel( $kernel_uri );
-	append( $append_str );
+	menu( $bootcfg, $name );
+	kernel( $kernel );
+	append( $append );
     }
 }
 
 function ISOArchMenu ( $bootcfg, $repository ) {
-    foreach ( $arch["$bootcfg"] ) {
-	$kernel_uri = $memdisk_uri["$arch"];
-	$append_str = "initrd=$initrd[$arch] iso raw";
+    global $repo, $memdisk_url, $agent_url;
+    $iso = ScanISO( $bootcfg );
+    foreach ( $iso as $iso_name ) {
+	$kernel_uri = 'http://'.$repo[$repository]["url"].'/'.$repo[$repository]["path"].$memdisk_url;
+	$iso_uri = "http://$agent_url?file=$iso_name&mirror=$repository&type=iso&proj=$bootcfg";
+	$append_str = "initrd=$iso_uri iso raw";
 	label( $bootcfg );
-	menu( $bootcfg, $arch );
+	menu( $bootcfg, $iso_name );
 	kernel( $kernel_uri );
 	append( $append_str );
+	echo "\n";
     }
 }
 function KernelCloudMenu ( $bootcfg ) {
-    foreach ( $repository ) {
-	echo "MENU BEGIN $bootcfg CloudKernel from $repository\n";
+    global $supported_repo;
+    foreach ( $supported_repo as $repository ) {
+	echo "MENU BEGIN $bootcfg Cloud Kernel from $repository\n";
 	KernelArchMenu ( $bootcfg, $repository);
-	echo "MENUEND\n";
+	echo "MENU END\n";
     }
 }
 
 function ISOCloudMenu ( $bootcfg ) {
-    foreach ( $repository ) {
+    global $supported_repo;
+    foreach ( $supported_repo as $repository ) {
+	echo "MENU BEGIN $bootcfg Cloud ISO from $repository\n";
 	ISOArchMenu ( $bootcfg, $repository);
+	echo "MENU END\n";
     }
 }    
 

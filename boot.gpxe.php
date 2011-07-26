@@ -5,7 +5,7 @@ echo <<< IPXE
 #!gpxe
 imgfree
 set 209:string $boot_menu_path
-set 210:string $local_url/
-chain $local_url/$pxelinux_file
+set 210:string http://$local_url/$local_path/
+chain http://$local_url/$local_path/$pxelinux_file
 IPXE;
 ?>
