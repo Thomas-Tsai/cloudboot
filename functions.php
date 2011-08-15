@@ -181,6 +181,7 @@ function append ( $append ) {
 
 function KernelArchMenu ( $bootcfg, $repository ) {
     global $kernel_param, $agent_url;
+    $ipxe_net = "eth0:140.110.240.46:255.255.255.0:140.110.240.254:8.8.8.8";
     $kernel_prefix_name = ScanKernel( $bootcfg );
     foreach ( $kernel_prefix_name as $name) {
 	$base_path	 = "http://$agent_url?mirror=$repository&type=kernel&proj=$bootcfg";
@@ -188,7 +189,7 @@ function KernelArchMenu ( $bootcfg, $repository ) {
 	$initrd		 = "$base_path&file=$name.initrd.img";
 	$filesystem	 = mapurl( $bootcfg, "kernel", $name, $repository, "1" ).".filesystem.squashfs";
 	$ipxe_net_config = $ipxe_net;
-	$append		 = "initrd=$initrd fetch=$filesystem ip=$ipxe_net_config $kernel_param[$bootcfg] toram";
+	$append		 = "initrd=$initrd fetch=$filesystem ip=$ipxe_net_config $kernel_param[$bootcfg] ethdevice=eth2,eth3 ethdevice-timeout=1";
 	label( $bootcfg );
 	menu( $bootcfg, $name );
 	kernel( $kernel );

@@ -13,6 +13,7 @@ if ( $bootcfg == "selectmode" ) {
     foreach ( $menu as $proj_dist => $submenu ) {
 	foreach ( $submenu as $proj ) {
 	    $proj_menu = "$proj";
+	    echo "MENU BACKGROUND pxe/drblwp.png\n";
 	    echo "LABEL $proj_menu Cloud\n";
 	    echo "COM32 $pxe_vesamenu\n";
 	    echo "APPEND http://$local_url/$local_path/$boot_menu_path?boot=$proj_menu\n\n";

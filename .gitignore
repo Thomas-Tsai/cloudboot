@@ -2,3 +2,5 @@ ipxe
 ipxe_image
 config.php
 rom-image.ipxe
+iso_img
+kernel_img
