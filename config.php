@@ -59,20 +59,20 @@ $nchc['netinstall']		               = "http://free.nchc.org.tw/cloudboot/netinst
 $nchc['kernel']		               = "http://free.nchc.org.tw/cloudboot/kernel_img/";
 
 ### global variable for project download link from local mirror (you need mirror some files from sourceforge)
-$local['clonezilla-stable']                 = "http://$local_url/iso_img/";
-$local['clonezilla-testing']                = "http://$local_url/iso_img/";
-$local['clonezilla-alternative-stable']     = "http://$local_url/iso_img/";
-$local['clonezilla-alternative-testing']    = "http://$local_url/iso_img/";
-$local['drbl-stable']                       = "http://$local_url/iso_img/";
-$local['drbl-testing']                      = "http://$local_url/iso_img/";
-$local['drbl-unstable']                     = "http://$local_url/iso_img/";
-$local['gparted-stable']                    = "http://$local_url/iso_img/";
-$local['gparted-testing']                   = "http://$local_url/iso_img/";
-$local['freedos.img']		       = "http://$local_url/small_img/";
-$local['memtest']		               = "http://$local_url/small_img/";
-$local['memdisk']		               = "http://$local_url/small_img/";
-$local['netinstall']		               = "http://$local_url/netinstall_img/";
-$local['kernel']			       = "http://$local_url/kernel_img/";
+$local['clonezilla-stable']                 = "http://$local_url/$local_path/iso_img/";
+$local['clonezilla-testing']                = "http://$local_url/$local_path/iso_img/";
+$local['clonezilla-alternative-stable']     = "http://$local_url/$local_path/iso_img/";
+$local['clonezilla-alternative-testing']    = "http://$local_url/$local_path/iso_img/";
+$local['drbl-stable']                       = "http://$local_url/$local_path/iso_img/";
+$local['drbl-testing']                      = "http://$local_url/$local_path/iso_img/";
+$local['drbl-unstable']                     = "http://$local_url/$local_path/iso_img/";
+$local['gparted-stable']                    = "http://$local_url/$local_path/iso_img/";
+$local['gparted-testing']                   = "http://$local_url/$local_path/iso_img/";
+$local['freedos.img']			    = "http://$local_url/$local_path/small_img/";
+$local['memtest']		            = "http://$local_url/$local_path/small_img/";
+$local['memdisk']		            = "http://$local_url/$local_path/small_img/";
+$local['netinstall']		            = "http://$local_url/$local_path/netinstall_img/";
+$local['kernel']			    = "http://$local_url/$local_path/kernel_img/";
 
 ### global variable for project pattern which defined regular expression for iso link
 $pattern['clonezilla-stable']              = '/<a href.*clonezilla.*iso.*>(.*)<\/a>/';

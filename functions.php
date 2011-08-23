@@ -119,7 +119,7 @@ function print_default_menu_entry(){
 }
 
 function mapurl ( $proj, $type, $file, $mirror, $rt ) {
-    global $supported_repo, $repo;
+    global $supported_repo, $repo ,$$mirror;
 
     $fileurl="http://";
     if ( in_array ( $mirror, $supported_repo ) )
