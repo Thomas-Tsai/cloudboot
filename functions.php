@@ -12,16 +12,19 @@ function repo_info ( $supported_repo ) {
 	eval( "\$pathp = \"repo_$name\".\"_path\";" );
 	eval( "\$pathisop = \"repo_$name\".\"_path_iso\";" );
 	eval( "\$pathkernelp = \"repo_$name\".\"_path_kernel\";" );
+	eval( "\$pathotherp = \"repo_$name\".\"_path_other\";" );
 
 	$url	    = $conf[$urlp];
 	$path	    = $conf[$pathp];
 	$pathiso    = $conf[$pathisop];
 	$pathkernel = $conf[$pathkernelp];
+	$pathother  = $conf[$pathotherp];
 
 	$repo[$name]["url"]	= $url;
 	$repo[$name]["path"]	= $path;
 	$repo[$name]["iso"]	= $pathiso;
 	$repo[$name]["kernel"]  = $pathkernel;
+	$repo[$name]["other"]   = $pathother;
     }
     return $repo;
 }
@@ -179,17 +182,44 @@ function append ( $append ) {
     echo "append $append\n";
 }
 
+function MemtestMenu ( $bootcfg, $repository ) {
+    global $agent_url, $memtest;
+    $name = "";
+
+    $base_path	 = "http://$agent_url?mirror=$repository&type=other&proj=$bootcfg";
+    $kernel	 = "$base_path&file=$memtest";
+    label( $bootcfg );
+    menu( $bootcfg, $name );
+    kernel( $kernel );
+}
+
+function FreedosMenu ( $bootcfg, $repository ) {
+    global $agent_url, $freedos, $repo, $memdisk_url;
+    $name = "";
+
+    $kernel_uri = 'http://'.$repo[$repository]["url"].'/'.$repo[$repository]["path"].$memdisk_url;
+    $base_path	 = "http://$agent_url?mirror=$repository&type=other&proj=$bootcfg";
+    $append_str	 = "initrd=$base_path&file=$freedos";
+    label( $bootcfg );
+    menu( $bootcfg, $name );
+    kernel( $kernel_uri );
+    append( $append_str );
+   
+}
+
 function KernelArchMenu ( $bootcfg, $repository ) {
     global $kernel_param, $agent_url;
-    $ipxe_net = "eth0:140.110.240.46:255.255.255.0:140.110.240.254:8.8.8.8";
+    #$ipxe_net = "eth0:140.110.240.46:255.255.255.0:140.110.240.254:8.8.8.8";
+    #$ipxe_net = "dhcp"
     $kernel_prefix_name = ScanKernel( $bootcfg );
     foreach ( $kernel_prefix_name as $name) {
 	$base_path	 = "http://$agent_url?mirror=$repository&type=kernel&proj=$bootcfg";
 	$kernel		 = "$base_path&file=$name.vmlinuz";
 	$initrd		 = "$base_path&file=$name.initrd.img";
 	$filesystem	 = mapurl( $bootcfg, "kernel", $name, $repository, "1" ).".filesystem.squashfs";
-	$ipxe_net_config = $ipxe_net;
-	$append		 = "initrd=$initrd fetch=$filesystem ip=$ipxe_net_config $kernel_param[$bootcfg] ethdevice=eth2,eth3 ethdevice-timeout=1";
+	#$ipxe_net_config = $ipxe_net;
+	#$append		 = "initrd=$initrd fetch=$filesystem ip=$ipxe_net_config $kernel_param[$bootcfg] ethdevice=eth2,eth3 ethdevice-timeout=1";
+	$append		 = "initrd=$initrd fetch=$filesystem $kernel_param[$bootcfg]";
 	label( $bootcfg );
 	menu( $bootcfg, $name );
 	kernel( $kernel );
@@ -211,6 +241,27 @@ function ISOArchMenu ( $bootcfg, $repository ) {
 	echo "\n";
     }
 }
+
+function memtest_menu ( $bootcfg ) {
+    global $supported_repo;
+    foreach ( $supported_repo as $repository ) {
+	echo "MENU BEGIN $bootcfg Cloud from $repository\n";
+	MemtestMenu ( $bootcfg, $repository);
+	echo "MENU END\n";
+    }
+   
+}
+
+function freedos_menu ( $bootcfg ) {
+    global $supported_repo;
+    foreach ( $supported_repo as $repository ) {
+	echo "MENU BEGIN $bootcfg Cloud from $repository\n";
+	FreedosMenu ( $bootcfg, $repository);
+	echo "MENU END\n";
+    }
+
+}
+
 function KernelCloudMenu ( $bootcfg ) {
     global $supported_repo;
     foreach ( $supported_repo as $repository ) {

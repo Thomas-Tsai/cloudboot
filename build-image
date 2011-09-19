@@ -26,12 +26,14 @@ ver=`cat VERSION`
 
 build_rom_script(){
 
-    ip=`get_conf site_url`
-    local_path=`get_conf local_path`
     default_repository=`get_conf default_repository`
+    repo_path=`eval echo "$default_repository"_path""`
+    repo_url=`eval echo "$default_repository"_url""`
+    boot_path=`get_conf $repo_path`
+    boot_ip=`get_conf $repo_url`
     cat <<-IPXE > $rom_script
 #!gpxe
-set filename http://$ip/$local_path/boot.gpxe.php
+set filename http://$boot_ip/$boot_path/boot.gpxe.php
 :ask_network
 echo Welcome to CLOUDBOOT
 echo Current Network status:

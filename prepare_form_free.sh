@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 ###################################################
 # prepare_from_free.sh
@@ -90,7 +91,6 @@ popd
 # end of stage 2
 
 popd
-
 exit 0;
 
 
