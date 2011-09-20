@@ -1,16 +1,6 @@
 ### TODO ###
  1. SSL support?
- 2. change background.png
+ 2. change background.png - done
  3. phram bug for bigger 512 memory in memdisk
  4. update sync for frs and set key
-
-## for iso_img
-write script to sync all iso to here
-
-## for kernel img
-unzip all vmlinuz initrd filesyste.squash to here
-ex:
-clonezilla-live-1.2.8-46-i686.filesystem.squashfs
-clonezilla-live-1.2.8-46-i686.initrd.img
-clonezilla-live-1.2.8-46-i686.vmlinuz
-
+ 5. stat ip address for kernel parameters

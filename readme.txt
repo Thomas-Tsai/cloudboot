@@ -37,3 +37,5 @@ run script build-netinstall to get all netinstall image and don't forget install
 4. test and done
 boot from ipxe.iso
 
+## sync data
+http://www.scriptol.com/how-to/upload-web-pages-to-sourceforge.php
