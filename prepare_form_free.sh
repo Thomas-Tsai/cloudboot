@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 ###################################################
 # prepare_from_free.sh
@@ -44,6 +43,7 @@ pushd $cloudboot_root_path
 # Stage 1: get iso file form 
 # tmp_iso_pool=`mktemp -dt iso.build.XXXXXX`
 #[ -d "$cloudboot_root_path/$_local_iso_pool" ] && rsync -av $cloudboot_root_path/$_local_iso_pool/ $tmp_iso_pool/
+[ -d "$cloudboot_root_path/$_local_iso_pool" ] || mkdir -p $cloudboot_root_path/$_local_iso_pool
 pushd $cloudboot_root_path/$_local_iso_pool
 
 for _release_id in $_iso_release_branch ; do
