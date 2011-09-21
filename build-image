@@ -18,7 +18,7 @@ cloudboot_root_path=$(cd $(dirname $0) ;pwd)
 #######
 
 rom_script="$cloudboot_root_path/rom-image.ipxe"
-ipxe_image_path="$cloudboot_root_path/ipxe_image"
+ipxe_image_path="$cloudboot_root_path/cloudboot_img"
 ipxe_path="ipxe"
 ipxe_src="$cloudboot_root_path/$ipxe_path/src/"
 ipxe_bin="$cloudboot_root_path/$ipxe_path/src/bin"
