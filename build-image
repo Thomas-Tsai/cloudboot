@@ -52,7 +52,7 @@ iseq \${answer} b && goto setup_ipconfig ||
 iseq \${answer} c && config ||
 iseq \${answer} d && goto setup_dhcp ||
 iseq \${answer} e && shell ||
-goto ask_network
+autoboot 
 
 :setup_dhcp
 dhcp && chain \${filename} || goto ask_network
