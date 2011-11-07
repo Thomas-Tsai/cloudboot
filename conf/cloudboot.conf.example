@@ -2,7 +2,7 @@
 ## check syslinux for more information ##
 
 ## define title
-pxe_menu_title      = CloudBoot - NCHC
+pxe_menu_title      = CloudBoot
 ## define path for vesamenu and pxelinux.0
 pxe_vesamenu	    = pxe/vesamenu.c32
 pxelinux	    = pxe/pxelinux.0
@@ -34,8 +34,8 @@ boot_menu	    = BOOTMENU.php
 # repo_local_path_kernel  = kernel_img    // another path name for kernel files
 # repo_local_path_other	  = small_img     // other path name for freedos, memtest...
 
-supported_repo		= sf nchc
-repo_local_url		= 
+supported_repo		= sf nchc local
+repo_local_url		= 127.0.0.1
 repo_local_path		= cloudboot
 repo_local_path_iso	= iso_img
 repo_local_path_kernel	= kernel_img
