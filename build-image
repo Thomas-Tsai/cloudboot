@@ -1,7 +1,5 @@
 #!/bin/bash
 
-
-
 # Load Tux2live setting and functions
 cloudboot_root_path=$(cd $(dirname $0) ;pwd)
 
@@ -24,11 +22,17 @@ ipxe_src="$cloudboot_root_path/$ipxe_path/src/"
 ipxe_bin="$cloudboot_root_path/$ipxe_path/src/bin"
 ver=`cat VERSION`
 
+[ ! -d $cloudboot_root_path/$ipxe_path ] && git clone git://git.ipxe.org/ipxe.git $ipxe_path
+pushd $ipxe_path
+git pull
+git_version=$(git log -1 | grep commit | sed s/commit//)
+popd
+
 build_rom_script(){
 
-    default_repository=`get_conf default_repository`
-    repo_path=`eval echo "$default_repository"_path""`
-    repo_url=`eval echo "$default_repository"_url""`
+    default_repository=`get_conf default_repository |tr A-Z a-z`
+    repo_path=`eval echo ""repo_"$default_repository"_path""`
+    repo_url=`eval echo ""repo_"$default_repository"_url""`
     boot_path=`get_conf $repo_path`
     boot_ip=`get_conf $repo_url`
     cat <<-IPXE > $rom_script
@@ -36,6 +40,10 @@ build_rom_script(){
 set filename http://$boot_ip/$boot_path/boot.gpxe.php
 :ask_network
 echo Welcome to CLOUDBOOT
+echo Cloudboot Version : $ver
+echo ipxe rom version : $git_version
+echo
+echo
 echo Current Network status:
 ifstat
 route
@@ -97,7 +105,6 @@ IPXE
 copy_rom() {
     keep_ipxe_make_dir=`get_conf keep_ipxe_build_env`
     [ ! -d $ipxe_image_path ] && mkdir $ipxe_image_path
-    [ ! -d $cloudboot_root_path/$ipxe_path ] && git clone git://git.ipxe.org/ipxe.git $ipxe_path
     [ -f $rom_script ] && make -C $ipxe_src EMBEDDED_IMAGE=$rom_script
     [ ! $? = "0" ] && echo "make failed , please fix it then do it again!!" && exit 1;
     rm $ipxe_bin/ipxe*.tmp

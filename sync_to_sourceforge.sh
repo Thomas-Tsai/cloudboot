@@ -8,7 +8,7 @@ sf_file_site="frs.sourceforge.net"
 sf_file_path="/home/frs/project/c/cl/cloudboot/"
 project="cloudboot"
 user="thomas_tsai"
-files_for_frs="netinstall_img ipxe_image small_img pxe iso_img kernel_img"
+files_for_frs="netinstall_img cloudboot_img small_img pxe iso_img kernel_img"
 manual_sync_files=""
 
 
