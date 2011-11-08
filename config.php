@@ -29,6 +29,7 @@ $boot_path	    = $conf[$pathp];
 $memdisk	= "memdisk";
 $freedos	= "freedos.img";
 $memtest	= "memtest";
+$ramdisk	= "128000";
 $agent_url	= "$local_url/$local_path/get_image.php";
 $memdisk_url	= "/small_img/$memdisk";
 $supported_repo = explode( " " , $conf["supported_repo"] );
@@ -117,6 +118,6 @@ $menu['clonezilla-alternative'] = array('clonezilla-alternative-stable', 'clonez
 #$menu['drbl']			= array('drbl-stable', 'drbl-testing', 'drbl-unstable');
 $menu['drbl']			= array('drbl-stable', 'drbl-testing');
 $menu['gparted']		= array('gparted-stable', 'gparted-testing');
-$menu['other']			= array('memtest','freedos');
+$menu['other']			= array('memtest','freedos','netinstall');
 $all_menu = array_merge( $menu['clonezilla'], $menu['clonezilla-alternative'], $menu['drbl'], $menu['gparted'], $menu['other']);
 ?>

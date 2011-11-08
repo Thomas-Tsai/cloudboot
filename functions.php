@@ -13,18 +13,21 @@ function repo_info ( $supported_repo ) {
 	eval( "\$pathisop = \"repo_$name\".\"_path_iso\";" );
 	eval( "\$pathkernelp = \"repo_$name\".\"_path_kernel\";" );
 	eval( "\$pathotherp = \"repo_$name\".\"_path_other\";" );
+	eval( "\$pathnetinstallp = \"repo_$name\".\"_path_netinstall\";" );
 
 	$url	    = $conf[$urlp];
 	$path	    = $conf[$pathp];
 	$pathiso    = $conf[$pathisop];
 	$pathkernel = $conf[$pathkernelp];
 	$pathother  = $conf[$pathotherp];
+	$pathnetinstall  = $conf[$pathnetinstallp];
 
 	$repo[$name]["url"]	= $url;
 	$repo[$name]["path"]	= $path;
 	$repo[$name]["iso"]	= $pathiso;
 	$repo[$name]["kernel"]  = $pathkernel;
 	$repo[$name]["other"]   = $pathother;
+	$repo[$name]["netinstall"]   = $pathnetinstall;
     }
     return $repo;
 }
@@ -63,7 +66,7 @@ echo $pxe_menu_title."\n";
 }
 
 ### function to find iso name and link ###
-function get_iso_from_page($page, $regx){
+function get_name_from_page($page, $regx){
     if (($page == '') || ($regx == '')){
 	return;
     }
@@ -84,7 +87,7 @@ function print_default_menu_entry(){
     $page_ok = preg_match("/200/",$http_response_header[0]);
 
     if ($page_ok){
-	$iso = get_iso_from_page($page, $pattern[$default_proj]);
+	$iso = get_name_from_page($page, $pattern[$default_proj]);
     } else {
 	return;	
     }
@@ -131,10 +134,14 @@ function mapurl ( $proj, $type, $file, $mirror, $rt ) {
 	    $url = $$mirror;
 	    $fileurl = $url[$proj].$file;
 	} else {
-	    $fileurl = $fileurl.$repo[$mirror]["url"].'/'.$repo[$mirror]["path"].'/'.$repo[$mirror][$type].'/'.$file;
+	    $imgurl = $repo[$mirror]["url"].'/'.$repo[$mirror]["path"].'/'.$repo[$mirror][$type].'/'.$file;
+	    $imgurl = preg_replace("/\/\//", "/", $imgurl);
+	    $fileurl = $fileurl.$imgurl;
 	}
     }
+
     if ( $rt == 1 ) {
+	//echo $fileurl;
 	return $fileurl;
     } else {
 	header( "Location: $fileurl");
@@ -147,7 +154,7 @@ function ScanISO ( $bootcfg ) {
     $page_ok = preg_match ( "/200/", $http_response_header[0] );
     $prefix_name[$bootcfg] = array();
     if ( $page_ok ) {
-	$iso = get_iso_from_page ( $page, $pattern[$bootcfg] );
+	$iso = get_name_from_page ( $page, $pattern[$bootcfg] );
 	$prefix = preg_replace ("/.iso/", "", $iso);
 	foreach ( $prefix as $name ) {
 	    array_push ($prefix_name[$bootcfg], $name);
@@ -156,6 +163,25 @@ function ScanISO ( $bootcfg ) {
     return $iso;
 
 }
+
+function ScanNetinstallImg ( $bootcfg ) {
+    global $local, $pattern, $prefix_name;
+    $page = file_get_contents ( $local[$bootcfg] );
+    $page_ok = preg_match ( "/200/", $http_response_header[0] );
+    $prefix_name[$bootcfg] = array();
+    if ( $page_ok ) {
+	$file = get_name_from_page ( $page, $pattern[$bootcfg] );
+	$prefix = preg_replace ("/.img/", "", $file);
+	foreach ( $prefix as $name ) {
+	    array_push ($prefix_name[$bootcfg], $name);
+	}
+    }
+    return $file;
+
+}
+
+
+
 
 function ScanKernel ( $bootcfg ) {
     global $prefix_name;
@@ -207,6 +233,24 @@ function FreedosMenu ( $bootcfg, $repository ) {
    
 }
 
+function NetinstallMenu ( $bootcfg, $repository ) {
+    global $agent_url, $memtest, $ramdisk;
+    $name = "";
+
+    $NetInstallImg = ScanNetinstallImg( $bootcfg );
+    foreach ( $NetInstallImg as $img ) {
+    $base_path	 = "http://$agent_url?mirror=$repository&type=netinstall&proj=$bootcfg";
+    $kernel	 = "$base_path&file=vmlinuz-netinstall-$img";
+    # replace vmlinux to initrd
+    $append	 = "initrd=$base_path&file=initrd-netinstall-$img.img ramdisk=$ramdisk";
+    label( $bootcfg );
+    menu( $bootcfg, $name );
+    kernel( $kernel );
+    append( $append );
+    }
+}
+
+
 function KernelArchMenu ( $bootcfg, $repository ) {
     global $kernel_param, $agent_url;
     #$ipxe_net = "eth0:140.110.240.46:255.255.255.0:140.110.240.254:8.8.8.8";
@@ -257,6 +301,16 @@ function freedos_menu ( $bootcfg ) {
     foreach ( $supported_repo as $repository ) {
 	echo "MENU BEGIN $bootcfg Cloud from $repository\n";
 	FreedosMenu ( $bootcfg, $repository);
+	echo "MENU END\n";
+    }
+
+}
+
+function netinstall_menu ( $bootcfg ) {
+    global $supported_repo;
+    foreach ( $supported_repo as $repository ) {
+	echo "MENU BEGIN $bootcfg Cloud from $repository\n";
+	NetinstallMenu ( $bootcfg, $repository);
 	echo "MENU END\n";
     }
 

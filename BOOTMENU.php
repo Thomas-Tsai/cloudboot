@@ -34,6 +34,9 @@ if ( in_array ( $bootcfg, $all_menu ) ) {
     } elseif ( $bootcfg == "freedos" ){
 	echo "MENU BACKGROUND $pxe_background\n\n";
 	freedos_menu( $bootcfg );
+    } elseif ( $bootcfg == "netinstall" ){
+	echo "MENU BACKGROUND $pxe_background\n\n";
+	netinstall_menu( $bootcfg );
     } else {
 	echo "MENU BACKGROUND $background[$bootcfg]\n\n";
 	KernelCloudMenu( $bootcfg );
