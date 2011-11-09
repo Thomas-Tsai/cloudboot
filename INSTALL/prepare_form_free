@@ -13,7 +13,7 @@
 ####################################################
 export PATH=$PATH:/usr/sbin:/bin:/sbin:/sbin
 
-cloudboot_root_path=$(cd $(dirname $0) ;pwd)
+cloudboot_root_path=$(cd $(dirname $0)/.. ;pwd)
 
 # Load sub function for global usage
 [ -f "$cloudboot_root_path/functions.lib" ] &&  . $cloudboot_root_path/functions.lib

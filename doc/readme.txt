@@ -42,18 +42,18 @@ copy conf/cloudboot.conf.example conf/cloudboot.conf
 edit conf/cloudboot.conf
 
 ## update ipxe
-## run script build-image and don't forget install build-essential and genisoimage and syslinux and p7zip-full
-apt-get install build-essential and genisoimage and syslinux p7zip-full
-./build-image
+## run script build-cloudboot-img and don't forget install build-essential and genisoimage and syslinux and p7zip-full 
+## for Netinstall
+## default enable netinstall is true, or edit conf/cloudboot.conf to update enable_netinstall = false
+## enable netinstall img, don't forget install drbl
+## add echo "deb http://free.nchc.org.tw/drbl-core drbl stable" >> /etc/apt/source.lists
+apt-get install build-essential genisoimage syslinux p7zip-full drbl
+./build-cloudboot-img
 
 ##run sync tool, (rsync, lftp is needed)
-##step1 get iso from free.nchc.org.tw
+##step1 get iso from free.nchc.org.tw (Taiwan)
 ##step2 extrace kernel, initrd.img and filesystem.squash
-./prepare_form_free.sh
-
-## Netinstall
-## run script build-netinstall to get all netinstall image and don't forget install drbl
-./build-netinstall
+./prepare-live-img
 
 4. test and done
 boot from cloudboot.iso from cloudboot_img
