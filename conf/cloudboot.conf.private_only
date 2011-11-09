@@ -40,6 +40,7 @@ repo_local_path		= cloudboot
 repo_local_path_iso	= iso_img
 repo_local_path_kernel	= kernel_img
 repo_local_path_other	= small_img
+repo_sf_local_netinstal	= netinstall_img
 
 ### DON'T edit sf and nchc values ###
 repo_sf_url		= prdownloads.sourceforge.net
@@ -47,11 +48,13 @@ repo_sf_path		= cloudboot
 repo_sf_path_iso	=
 repo_sf_path_kernel	=
 repo_sf_path_other	=
+repo_sf_path_netinstall	=
 repo_nchc_url		= cloudboot.nchc.org.tw
 repo_nchc_path		= cloudboot
 repo_nchc_path_iso	= iso_img
 repo_nchc_path_kernel	= kernel_img
 repo_nchc_path_other	= small_img
+repo_nchc_path_netinstall= netinstall_img
 
 # should install drbl and run build-netinstall.sh #
 enable_netinstall	= true 
