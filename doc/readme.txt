@@ -40,6 +40,7 @@ git clone ssh://someone@free.nchc.org.tw:$port/home/gitpool/cloudboot/
 3. config cloudboot
 copy conf/cloudboot.conf.example conf/cloudboot.conf
 edit conf/cloudboot.conf
+***IMPORTANT*** update "repo_local_url" to your hostname.domainname
 
 ## update ipxe
 ## run script build-cloudboot-img and don't forget install build-essential and genisoimage and syslinux and p7zip-full 
