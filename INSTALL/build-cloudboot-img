@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Load Tux2live setting and functions
-cloudboot_root_path=$(cd $(dirname $0) ;pwd)
+cloudboot_root_path=$(cd $(dirname $0)/.. ;pwd)
 
 # Load global configuration 
 # It's ini file, not shellconf, replace as
@@ -17,12 +17,14 @@ cloudboot_root_path=$(cd $(dirname $0) ;pwd)
 
 rom_script="$cloudboot_root_path/rom-image.ipxe"
 ipxe_image_path="$cloudboot_root_path/cloudboot_img"
-ipxe_path="ipxe"
-ipxe_src="$cloudboot_root_path/$ipxe_path/src/"
-ipxe_bin="$cloudboot_root_path/$ipxe_path/src/bin"
-ver=`cat VERSION`
+ipxe_path="$cloudboot_root_path/ipxe-git"
+ipxe_src="$ipxe_path/src/"
+ipxe_bin="$ipxe_path/src/bin"
+netinstall_path="$cloudboot_root_path/netinstall_img"
+ver=`cat $cloudboot_root_path/VERSION`
 
-[ ! -d $cloudboot_root_path/$ipxe_path ] && git clone git://git.ipxe.org/ipxe.git $ipxe_path
+[ ! -d $ipxe_path ] && mkdir -p $ipxe_path
+git clone git://git.ipxe.org/ipxe.git $ipxe_path
 pushd $ipxe_path
 git pull
 git_version=$(git log -1 | grep commit | sed s/commit//)
@@ -118,13 +120,23 @@ copy_rom() {
     [ $keep_ipxe_make_dir == "NO" ] && rm -rf $ipxe_path
 }
 
-enable_custom_rom_page(){
+enable_custom_rom_webpage(){
     enable_custom_rom=`get_conf enable_custom_rom`
     if [ $enable_custom_rom == 'true' -o $enable_custom_rom == 'TRUE' ]; then
         make -C $ipxe_src bin/NIC
     fi
 }
 
+build_netinstall(){
+    enable_netinstall=`get_conf enable_netinstall` 
+    if [ $enable_netinstall == 'true' -o $enable_netinstall == 'TRUE' ]; then
+	[ -d $netinstall_path ] || mkdir -p $netinstall_path
+	/opt/drbl/sbin/drbl-netinstall -d $netinstall_path -i all -s -w
+    fi
+}
+
 build_rom_script
 copy_rom
-enable_custom_rom_page
+enable_custom_rom_webpage
+build_netinstall
+

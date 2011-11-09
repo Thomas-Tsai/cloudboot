@@ -29,12 +29,16 @@ cgi.assign      = (
     )
 
 2. prepare web applications
-## get cloudboot source code from git
+## get source code
+cd /var/www
+lftp -c get http://cloudboot.nchc.org.tw/download/cloudboot-testing.tar.gz
+
+## or get cloudboot source code from git
 cd /var/www
 git clone ssh://someone@free.nchc.org.tw:$port/home/gitpool/cloudboot/
 
-
 3. config cloudboot
+copy conf/cloudboot.conf.example conf/cloudboot.conf
 edit conf/cloudboot.conf
 
 ## update ipxe
@@ -42,7 +46,9 @@ edit conf/cloudboot.conf
 apt-get install build-essential and genisoimage and syslinux p7zip-full
 ./build-image
 
-##run sync tool, step1 get iso from free.nchc.org.tw, step2 extrace kernel, initrd.img and filesystem.squash
+##run sync tool, (rsync, lftp is needed)
+##step1 get iso from free.nchc.org.tw
+##step2 extrace kernel, initrd.img and filesystem.squash
 ./prepare_form_free.sh
 
 ## Netinstall
@@ -50,4 +56,4 @@ apt-get install build-essential and genisoimage and syslinux p7zip-full
 ./build-netinstall
 
 4. test and done
-boot from cloudboot.iso from ipxe_image
+boot from cloudboot.iso from cloudboot_img
