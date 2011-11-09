@@ -27,11 +27,13 @@ cgi.assign      = (
 #   ".py"  => "/usr/bin/python",
     ".php" => "/usr/bin/php-cgi",
     )
+# restart lighttpd
+/etc/init.d/lighttpd restart
 
 2. prepare web applications
 ## get source code
 cd /var/www
-lftp -c get http://cloudboot.nchc.org.tw/download/cloudboot-testing.tar.gz
+lftp -c get http://cloudboot.nchc.org.tw/download/cloudboot-$version.tar.gz
 
 ## or get cloudboot source code from git
 cd /var/www
@@ -47,14 +49,17 @@ edit conf/cloudboot.conf
 ## for Netinstall
 ## default enable netinstall is true, or edit conf/cloudboot.conf to update enable_netinstall = false
 ## enable netinstall img, don't forget install drbl
-## add echo "deb http://free.nchc.org.tw/drbl-core drbl stable" >> /etc/apt/source.lists
+## add drbl repository
+echo "deb http://free.nchc.org.tw/drbl-core drbl stable" >> /etc/apt/sources.list
+wget -q http://drbl.nchc.org.tw/GPG-KEY-DRBL -O- | sudo apt-key add -
+apt-get update
 apt-get install build-essential genisoimage syslinux p7zip-full drbl
-./build-cloudboot-img
+./INSTALL/build-cloudboot-img
 
 ##run sync tool, (rsync, lftp is needed)
 ##step1 get iso from free.nchc.org.tw (Taiwan)
 ##step2 extrace kernel, initrd.img and filesystem.squash
-./prepare-live-img
+./INSTALL/prepare-live-img
 
 4. test and done
 boot from cloudboot.iso from cloudboot_img
