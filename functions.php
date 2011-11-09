@@ -239,14 +239,14 @@ function NetinstallMenu ( $bootcfg, $repository ) {
 
     $NetInstallImg = ScanNetinstallImg( $bootcfg );
     foreach ( $NetInstallImg as $img ) {
-    $base_path	 = "http://$agent_url?mirror=$repository&type=netinstall&proj=$bootcfg";
-    $kernel	 = "$base_path&file=vmlinuz-netinstall-$img";
-    # replace vmlinux to initrd
-    $append	 = "initrd=$base_path&file=initrd-netinstall-$img.img ramdisk=$ramdisk";
-    label( $bootcfg );
-    menu( $bootcfg, $name );
-    kernel( $kernel );
-    append( $append );
+	$base_path	 = "http://$agent_url?mirror=$repository&type=netinstall&proj=$bootcfg";
+	$kernel	 = "$base_path&file=vmlinuz-netinstall-$img";
+	# replace vmlinux to initrd
+	$append	 = "initrd=$base_path&file=initrd-netinstall-$img.img ramdisk=$ramdisk";
+	label( $bootcfg );
+	menu( $bootcfg, $img );
+	kernel( $kernel );
+	append( $append );
     }
 }
 
