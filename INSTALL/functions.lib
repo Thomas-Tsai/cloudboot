@@ -13,7 +13,8 @@
 ####################################################
 
 _LOAD_CLOUDBOOT_FUNCTIONS=y
-_DEFAULT_CONF_PATH="conf/cloudboot.conf"
+cloudboot_root_path=$(cd $(dirname $0)/.. ;pwd)
+_DEFAULT_CONF_PATH="$cloudboot_root_path/conf/cloudboot.conf"
 
 # setup some parameters for color output. The variables should be already 
 # defined in the /etc/init.d/functions in RH-like distribution 

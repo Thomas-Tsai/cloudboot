@@ -9,7 +9,7 @@ cloudboot_root_path=$(cd $(dirname $0)/.. ;pwd)
 #[ -f "$cloudboot_root_path/conf/cloudboot.conf" ] &&  . $cloudboot_root_path/conf/cloudboot.conf
 
 # Load sub function for global usage
-[ -f "$cloudboot_root_path/functions.lib" ] &&  . $cloudboot_root_path/functions.lib
+[ -f "$cloudboot_root_path/INSTALL/functions.lib" ] &&  . $cloudboot_root_path/INSTALL/functions.lib
 
 #######
 # Main
