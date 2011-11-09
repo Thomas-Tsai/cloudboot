@@ -40,7 +40,7 @@ repo_local_path		= cloudboot
 repo_local_path_iso	= iso_img
 repo_local_path_kernel	= kernel_img
 repo_local_path_other	= small_img
-repo_sf_local_netinstal	= netinstall_img
+repo_local_path_netinstall	= netinstall_img
 
 ### DON'T edit sf and nchc values ###
 repo_sf_url		= prdownloads.sourceforge.net
