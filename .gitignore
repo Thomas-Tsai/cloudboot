@@ -1,6 +1,8 @@
 ipxe
-ipxe_image
-config.php
 rom-image.ipxe
 iso_img
 kernel_img
+netinstall_img
+cloudboot_img
+src
+conf/cloudboot.conf
