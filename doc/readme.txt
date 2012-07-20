@@ -3,9 +3,10 @@
 ## setup lighttp and php5-cgi
 install php and lighttp
 $ apt-get install lighttpd php5-cgi php5-common
+$ apt-get install apache2 libapache2-mod-php5 php5-common php5-cli
 
-## config php
-configure and reset option in /etc/php5/cgi/php.ini
+## config php 
+configure and reset option in /etc/php5/cgi/php.ini for lighttp or /etc/php5/apache2/php.ini for apache2
 error_reporting = E_ALL & ~E_NOTICE
 display_errors = Off
 
@@ -16,8 +17,8 @@ display_errors = On
 ## config web server
 configure lighttpd.conf
 $ lighttpd-enable-mod cgi
-
 and edit /etc/lighttpd/conf-enabled/10-cgi.conf
+
 
 ## Warning this represents a security risk, as it allow to execute any file
 ## with a .pl/.py even outside of /usr/lib/cgi-bin.
@@ -29,6 +30,19 @@ cgi.assign      = (
     )
 # restart lighttpd
 /etc/init.d/lighttpd restart
+
+configure apache2
+$ a2enmod php5
+
+alias /cloudboot /root/cloudboot
+<Directory /root/cloudboot/>
+Options Indexes FollowSymLinks +ExecCGI
+AllowOverride None
+Order allow,deny
+allow from all
+</Directory>
+
+service apache2 restart
 
 2. prepare web applications
 ## get source code
