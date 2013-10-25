@@ -131,7 +131,7 @@ build_netinstall(){
     enable_netinstall=`get_conf enable_netinstall` 
     if [ $enable_netinstall == 'true' -o $enable_netinstall == 'TRUE' ]; then
 	[ -d $netinstall_path ] || mkdir -p $netinstall_path
-	/opt/drbl/sbin/drbl-netinstall -d $netinstall_path -i all -s -w
+	/sbin/drbl-netinstall -d $netinstall_path -i all -s -w
     fi
 }
 
