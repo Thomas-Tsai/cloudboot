@@ -117,6 +117,8 @@ copy_rom() {
     cp $ipxe_bin/ipxe.dsk  $ipxe_image_path/cloudboot_$ver.dsk
     cp $ipxe_bin/ipxe.lkrn $ipxe_image_path/cloudboot_$ver.lkrn
     cp $ipxe_bin/ipxe.usb  $ipxe_image_path/cloudboot_$ver.usb
+    make $ipxe_bin/undionly.kpxe EMBED=$rom_script
+    cp $ipxe_bin/undionly.kpxe  $ipxe_image_path/cloudboot_$ver.kpxe
     [ $keep_ipxe_make_dir == "NO" ] && rm -rf $ipxe_path
 }
 
