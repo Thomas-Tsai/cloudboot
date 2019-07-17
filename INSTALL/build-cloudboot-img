@@ -117,6 +117,8 @@ copy_rom() {
     cp $ipxe_bin/ipxe.dsk  $ipxe_image_path/cloudboot_$ver.dsk
     cp $ipxe_bin/ipxe.lkrn $ipxe_image_path/cloudboot_$ver.lkrn
     cp $ipxe_bin/ipxe.usb  $ipxe_image_path/cloudboot_$ver.usb
+    make $ipxe_bin/undionly.kpxe EMBED=$rom_script
+    cp $ipxe_bin/undionly.kpxe  $ipxe_image_path/cloudboot_$ver.kpxe
     [ $keep_ipxe_make_dir == "NO" ] && rm -rf $ipxe_path
 }
 
@@ -131,7 +133,7 @@ build_netinstall(){
     enable_netinstall=`get_conf enable_netinstall` 
     if [ $enable_netinstall == 'true' -o $enable_netinstall == 'TRUE' ]; then
 	[ -d $netinstall_path ] || mkdir -p $netinstall_path
-	/opt/drbl/sbin/drbl-netinstall -d $netinstall_path -i all -s -w
+	/usr/sbin/drbl-netinstall -d $netinstall_path -i all -s -w
     fi
 }
 
